@@ -1659,17 +1659,17 @@ static int *****alloc_and_load_pin_to_track_map(const e_pin_type pin_type,
 
 	/* get the maximum number of tracks that any pin can connect to */
 	int max_pin_tracks = 0;
+	int *max_Fc = (int *)calloc(0, num_seg_types*sizeof(int));
 	for (int iseg = 0; iseg < num_seg_types; iseg++){
 		/* determine the maximum Fc to this segment type across all pins */
-		int max_Fc = 0;
 		for (int pin_index = 0; pin_index < Type->num_pins; ++pin_index) {
 			int pin_class = Type->pin_class[pin_index];
-			if (Fc[pin_index][iseg] > max_Fc && Type->class_inf[pin_class].type == pin_type) {
-				max_Fc = Fc[pin_index][iseg];
+			if (Fc[pin_index][iseg] > max_Fc[iseg] && Type->class_inf[pin_class].type == pin_type) {
+				max_Fc[iseg] = Fc[pin_index][iseg];
 			}
 		}
 
-		max_pin_tracks += max_Fc;
+		max_pin_tracks += max_Fc[iseg];
 	}
 
 	/* allocate 'result' matrix and initialize entries to OPEN. also allocate and intialize matrix which will be
@@ -1703,19 +1703,19 @@ static int *****alloc_and_load_pin_to_track_map(const e_pin_type pin_type,
 		int seg_type_tracks = fac * sets_per_seg_type[iseg];
 
 		/* determine the maximum Fc to this segment type across all pins */
-		int max_Fc = 0;
-		for (int pin_index = 0; pin_index < Type->num_pins; ++pin_index) {
-			int pin_class = Type->pin_class[pin_index];
-			if (Fc[pin_index][iseg] > max_Fc && Type->class_inf[pin_class].type == pin_type) {
-				max_Fc = Fc[pin_index][iseg];
-			}
-		}
+//		int max_Fc = 0;
+//		for (int pin_index = 0; pin_index < Type->num_pins; ++pin_index) {
+//			int pin_class = Type->pin_class[pin_index];
+//			if (Fc[pin_index][iseg] > max_Fc && Type->class_inf[pin_class].type == pin_type) {
+//				max_Fc = Fc[pin_index][iseg];
+//			}
+//		}
 
 		/* get pin connections to tracks of the current segment type */
 		int *****pin_to_seg_type_map = NULL;	/* [0..num_pins-1][0..width-1][0..height-1][0..3][0..Fc-1] */
 
 		pin_to_seg_type_map = alloc_and_load_pin_to_seg_type(pin_type,
-				seg_type_tracks, max_Fc, Type, perturb_switch_pattern[iseg], directionality);
+				seg_type_tracks, max_Fc[iseg], Type, perturb_switch_pattern[iseg], directionality);
 
 		/* connections in pin_to_seg_type_map are within that seg type -- i.e. in the [0,seg_type_tracks-1] range.
 		   now load up 'result' array with these connections, but offset them so they are relative to the channel
@@ -1724,7 +1724,7 @@ static int *****alloc_and_load_pin_to_track_map(const e_pin_type pin_type,
 			for (int iwidth = 0; iwidth < Type->width; iwidth++){
 				for (int iheight = 0; iheight < Type->height; iheight++){
 					for (int iside = 0; iside < 4; iside++){
-						for (int iconn = 0; iconn < max_Fc; iconn++){
+						for (int iconn = 0; iconn < max_Fc[iseg]; iconn++){
 							int relative_track_ind = pin_to_seg_type_map[ipin][iwidth][iheight][iside][iconn];
 							int absolute_track_ind = relative_track_ind + seg_type_start_track;
 
