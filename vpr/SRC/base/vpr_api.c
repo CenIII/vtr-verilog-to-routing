@@ -38,6 +38,7 @@ using namespace std;
 #include "OptionTokens.h"
 #include "ReadOptions.h"
 #include "read_xml_arch_file.h"
+#include "SetupPentLine.h"
 #include "SetupVPR.h"
 #include "ShowSetup.h"
 #include "CheckArch.h"
@@ -207,6 +208,9 @@ void vpr_init(const int argc, const char **argv,
 		SetPostSynthesisOption(IsPostSynthesisEnabled(options));
 		vpr_setup->constant_net_delay = options->constant_net_delay;
 		vpr_setup->gen_netlist_as_blif = (options->Count[OT_GEN_NELIST_AS_BLIF] > 0);
+
+        /*TODO: fill the function*/
+		SetupPentLine();
 
 		/* Read in arch and circuit */
 		SetupVPR(options, vpr_setup->TimingEnabled, true, &vpr_setup->FileNameOpts,

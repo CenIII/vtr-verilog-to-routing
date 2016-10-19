@@ -409,7 +409,7 @@ void build_rr_graph(
 	} else if (BI_DIRECTIONAL == directionality) {
 		if (sb_type == CUSTOM){
 			sb_conn_map = alloc_and_load_switchblock_permutations(chan_details_x,
-					chan_details_y, L_nx, L_ny, switchblocks, 
+					chan_details_y, max_chan_width, L_nx, L_ny, switchblocks,
 					nodes_per_chan, directionality);
 		} else {
 			switch_block_conn = alloc_and_load_switch_block_conn(max_chan_width,
@@ -420,7 +420,7 @@ void build_rr_graph(
 
 		if (sb_type == CUSTOM){
 			sb_conn_map = alloc_and_load_switchblock_permutations(chan_details_x,
-					chan_details_y, L_nx, L_ny, switchblocks, 
+					chan_details_y, max_chan_width, L_nx, L_ny, switchblocks,
 					nodes_per_chan, directionality);
 		} else {
 			/* it looks like we get unbalanced muxing from this switch block code with Fs > 3 */
@@ -1428,7 +1428,7 @@ static void build_rr_sinks_sources(const int i, const int j,
    node properties such as cost, occupancy and capacity */
 static void build_rr_chan(const int x_coord, const int y_coord, const t_rr_type chan_type,
 		vtr::t_ivec *****track_to_pin_lookup, t_sb_connection_map *sb_conn_map,
-		vtr::t_ivec ***switch_block_conn, const int cost_index_offset,
+		vtr::t_ivec ***switch_block_conn,  const int cost_index_offset,
 		const int max_chan_width, const int tracks_per_chan,
 		short ******sblock_pattern, const int Fs_per_side,
 		const t_chan_details * chan_details_x, const t_chan_details * chan_details_y,
@@ -1587,6 +1587,7 @@ static void build_rr_chan(const int x_coord, const int y_coord, const t_rr_type 
 
 		L_rr_node[node].set_ptc_num(track);
 		L_rr_node[node].type = chan_type;
+		L_rr_node[node].pent_type = seg_details[track].pent_type_ptr;
 		L_rr_node[node].set_direction(seg_details[track].direction);
 		//L_rr_node[node].set_drivers(seg_details[track].drivers);
 	}
@@ -1751,6 +1752,7 @@ static int *****alloc_and_load_pin_to_track_map(const e_pin_type pin_type,
 	}
 
 	/* free temporary function variables */
+    free(max_Fc);
     vtr::free_matrix4(next_result_index, 0, Type->num_pins-1,
 			0, Type->width-1,
 			0, Type->height-1,
@@ -2307,6 +2309,7 @@ void print_rr_node(FILE * fp, t_rr_node * L_rr_node, int inode) {
 	fprintf(fp, "Ptc_num: %d ", L_rr_node[inode].get_ptc_num());
 	fprintf(fp, "Direction: %s ", direction_name[L_rr_node[inode].get_direction() + 1]);
 	fprintf(fp, "Drivers: %s ", drivers_name[L_rr_node[inode].get_drivers() + 1]);
+	fprintf(fp, "IsPent: %d" , L_rr_node[inode].pent_type->isPent);
 	fprintf(fp, "\n");
 
 	if( rr_type == IPIN || rr_type == OPIN)

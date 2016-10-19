@@ -73,6 +73,8 @@ public:
 	int *edges;
 	short *switches;
 
+	t_pent_seg_type_info* pent_type;
+
 	float R;
 	float C;
 

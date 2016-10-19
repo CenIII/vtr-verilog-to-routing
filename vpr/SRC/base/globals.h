@@ -104,6 +104,9 @@ extern int *vpack_to_clb_net_mapping; /* [0..num_vpack_nets - 1] */
  Routing related globals
  ********************************************************************/
 
+extern t_pent_seg_type_info *pent_type;
+extern t_len_to_pent_map *lp_map;
+
 /* chan_width is for x|y-directed channels; i.e. between rows */
 extern t_chan_width chan_width;
 
@@ -112,7 +115,7 @@ extern struct s_trace **trace_head, **trace_tail;
 
 /* Structures to define the routing architecture of the FPGA.           */
 extern int num_rr_nodes;
-extern t_rr_node *rr_node; /* [0..num_rr_nodes-1]          */
+extern t_rr_node *rr_node; /*  [0..num_rr_nodes-1]          */
 extern int num_rr_indexed_data;
 extern t_rr_indexed_data *rr_indexed_data; /* [0 .. num_rr_indexed_data-1] */
 extern vtr::t_ivec ***rr_node_indices;

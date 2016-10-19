@@ -257,21 +257,23 @@
       <sourceFolder url="file://$MODULE_DIR$/vpr/SRC/base/SetupVPR.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/vpr/SRC/base/read_netlist.c" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/vpr/SRC/base/globals.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/vpr/SRC/base/SetupPentLine.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/vpr/SRC/base/SetupVPR.c" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/vpr/SRC/base/globals.c" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/vpr/SRC/base/read_netlist.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/vpr/SRC/base/read_place.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/vpr/SRC/base/SetupPentLine.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/vpr/SRC/base/netlist.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/vpr/SRC/base/ReadOptions.c" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/vpr/SRC/base/read_place.c" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/vpr/SRC/base/place_and_route.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/vpr/SRC/base/read_netlist.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/vpr/SRC/base/ReadOptions.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/vpr/SRC/base/vpr_api.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/vpr/SRC/base/place_and_route.c" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/vpr/SRC/base/SetupGrid.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/vpr/SRC/base/vpr_api.c" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/vpr/SRC/base/SetupGrid.c" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/vpr/SRC/base/ShowSetup.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/vpr/SRC/base/ReadOptions.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/vpr/SRC/base/ReadOptions.c" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/vpr/SRC/base/ShowSetup.c" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/vpr/SRC/base/CheckOptions.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/vpr/SRC/base/vpr_types.h" isTestSource="false" />
@@ -323,9 +325,9 @@
       <sourceFolder url="file://$MODULE_DIR$/vpr/SRC/power/power_sizing.c" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/vpr/SRC/power/power_cmos_tech.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/vpr/SRC/power/power_components.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/vpr/SRC/power/power_cmos_tech.c" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/vpr/SRC/power/power.c" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/vpr/SRC/power/power_sizing.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/vpr/SRC/power/power_cmos_tech.c" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/vpr/SRC/power/PowerSpicedComponent.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/vpr/SRC/power/power_lowlevel.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/vpr/SRC/power/power_callibrate.h" isTestSource="false" />

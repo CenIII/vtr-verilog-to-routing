@@ -132,7 +132,7 @@ that formulas are evaluated in 'parse_switchblocks.c'):
 #include <iostream>
 
 #include "vtr_assert.h"
-
+#include "globals.h"
 #include "vpr_error.h"
 
 #include "build_switchblocks.h"
@@ -258,7 +258,7 @@ int get_wire_segment_length(int nx, int ny, e_rr_type chan_type, t_seg_details &
 /* Returns the switchpoint of the wire specified by wire_details at a segment coordinate
    of seg_coord, and connection to the sb_side of the switchblock */
 static int get_switchpoint_of_wire(int nx, int ny, e_rr_type chan_type,
-                                   t_seg_details &wire_details, int seg_coord, e_side sb_side);
+                                   t_seg_details &wire_details, int seg_coord, e_side sb_side, bool IsForPent);
 
 /* returns true if the coordinates x/y do not correspond to the location specified by 'location' */
 static bool sb_not_here(int nx, int ny, int x, int y, e_sb_location location);
@@ -278,21 +278,21 @@ static int adjust_formula_result(int dest_wire, int dest_W);
 /* compute the wire(s) that the wire(s) at (x, y, from_side, to_side) should connect to,
  * sb_conns is updated with the result */
 void compute_each_side(int x_coord, int y_coord, enum e_side from_side,enum e_side to_side,t_chan_details * chan_details_x,
-                       t_chan_details * chan_details_y,t_switchblock_inf *sb,
+                       t_chan_details * chan_details_y, int max_chan_width, t_switchblock_inf *sb,
                        int nx, int ny,t_wire_type_sizes *wire_type_sizes, e_directionality directionality,
                        t_sb_connection_map *sb_conns);
 
 /* compute all the wire connections given the specific "from_side", "to_side" and "wireconn_ptr",
  * and it's the sub-iteration of "compute_each_side" call */
 void compute_each_conn(int x_coord, int y_coord, enum e_side from_side,enum e_side to_side, int from_x, int from_y,
-                       t_switchblock_inf *sb, int nx, int ny, t_chan_details *from_chan_details, t_chan_details *to_chan_details, int to_x, int to_y,
+                       t_switchblock_inf *sb, int nx, int ny, t_chan_details *from_chan_details, t_chan_details *to_chan_details, int max_chan_width, int to_x, int to_y,
                        t_rr_type from_chan_type, t_rr_type to_chan_type, t_wire_type_sizes *wire_type_sizes, t_wireconn_inf *wireconn_ptr,
-                       t_sb_connection_map *sb_conns,e_directionality directionality);
+                       t_sb_connection_map *sb_conns,e_directionality directionality, Switchblock_Lookup *sb_conn);
 
 /************ Function Definitions ************/
 /* allocate and build the switchblock permutation map */
 t_sb_connection_map * alloc_and_load_switchblock_permutations( t_chan_details * chan_details_x,
-                                                               t_chan_details * chan_details_y, int nx, int ny,
+                                                               t_chan_details * chan_details_y, int max_chan_width, int nx, int ny,
                                                                vector<t_switchblock_inf> switchblocks,
                                                                s_chan_width *nodes_per_chan, e_directionality directionality){
 
@@ -343,8 +343,8 @@ t_sb_connection_map * alloc_and_load_switchblock_permutations( t_chan_details * 
 
         /* Iterate over the x,y coordinates spanning the FPGA. Currently, the FPGA size is set as
            (0..nx+1) by (0..ny+1), so we iterate over 0..nx and 0..ny. */
-        for (int x_coord = 0; x_coord <= nx+1; x_coord++){
-            for (int y_coord = 0; y_coord <= ny+1; y_coord++){
+        for (int x_coord = 0; x_coord <= nx; x_coord++){
+            for (int y_coord = 0; y_coord <= ny; y_coord++){
                 if (sb_not_here(nx, ny, x_coord, y_coord, sb.location)) {
                     continue;
                 }
@@ -357,7 +357,7 @@ t_sb_connection_map * alloc_and_load_switchblock_permutations( t_chan_details * 
                             continue;
                         }
                         /* Fill appropriate entry of the sb_conns map for each "from_side" and "to_side" pair at the given (x_coord, y_coord) coordinate. */
-                        compute_each_side(x_coord, y_coord, from_side, to_side, chan_details_x, chan_details_y, &sb, nx,
+                        compute_each_side(x_coord, y_coord, from_side, to_side, chan_details_x, chan_details_y, max_chan_width, &sb, nx,
                                           ny, &wire_type_sizes, directionality, sb_conns);
 
                     }
@@ -370,8 +370,21 @@ t_sb_connection_map * alloc_and_load_switchblock_permutations( t_chan_details * 
     return sb_conns;
 }
 
+bool check_pent_conn_legal(t_seg_details from_details, t_seg_details to_details, t_rr_type from_chan_type, t_rr_type to_chan_type){
+    /* fill this function. to check whether this pent conn legal or not referring to the pats */
+    for(int i=0;i<from_details.pent_type_ptr->numSubEdges;i++){
+        if(&from_details.pent_type_ptr->SubEdges[i] == to_details.pent_type_ptr){
+            if(((from_details.direction == from_details.pent_type_ptr->Direction) == (to_details.direction == to_details.pent_type_ptr->Direction)) &&
+                    ((from_chan_type == from_details.pent_type_ptr->XorY) == (to_chan_type == to_details.pent_type_ptr->XorY))){
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 void compute_each_side(int x_coord, int y_coord, enum e_side from_side,enum e_side to_side,t_chan_details * chan_details_x,
-                       t_chan_details * chan_details_y,t_switchblock_inf *sb,
+                       t_chan_details * chan_details_y, int max_chan_width, t_switchblock_inf *sb,
                        int nx, int ny,t_wire_type_sizes *wire_type_sizes, e_directionality directionality,
                        t_sb_connection_map *sb_conns) {
 
@@ -407,13 +420,53 @@ void compute_each_side(int x_coord, int y_coord, enum e_side from_side,enum e_si
         return;
     }
 
+    Switchblock_Lookup sb_conn(x_coord, y_coord, from_side, to_side,0);	/* for indexing into FPGA's switchblock map */
+
+
+    /* 处理pentline */
+    int inter=0;
+    for( int from_No = 0; from_No < max_chan_width; from_No++){
+        e_direction d = from_chan_details[from_x][from_y][from_No].direction;
+        if(((d==INC_DIRECTION && (from_side==LEFT || from_side==BOTTOM))||
+            (d==DEC_DIRECTION && (from_side==TOP || from_side==RIGHT))) &&
+                from_chan_details[from_x][from_y][from_No].pent_type_ptr->isPent &&
+           from_chan_details[from_x][from_y][from_No].pent_type_ptr->numSubEdges > 0 &&
+                (get_switchpoint_of_wire(nx, ny, from_chan_type, from_chan_details[from_x][from_y][from_No], from_chan_type == CHANX? from_x:from_y, from_side, true) == 0)) {
+
+
+            for(int to_No = inter; to_No < max_chan_width; to_No++, inter++){
+                e_direction dt = to_chan_details[to_x][to_y][to_No].direction;
+                if(((dt==DEC_DIRECTION && (to_side==LEFT || to_side==BOTTOM))||
+                    (dt==INC_DIRECTION && (to_side==TOP || to_side==RIGHT))) &&
+                        to_chan_details[to_x][to_y][to_No].pent_type_ptr->isPent &&
+                   (get_switchpoint_of_wire(nx, ny, to_chan_type, to_chan_details[to_x][to_y][to_No], to_chan_type == CHANX? to_x:to_y, to_side, true) == 0)){
+                    if(check_pent_conn_legal(from_chan_details[from_x][from_y][from_No], to_chan_details[to_x][to_y][to_No], from_chan_type, to_chan_type)){
+                        sb_conn.from_wire = from_No;
+                        t_to_wire_inf to_wire_inf;
+                        to_wire_inf.to_wire = (short) to_No;
+                        /* TODO: find the right switch type number for the hard wire. and make the assignment. */
+                        to_wire_inf.switch_ind = 3;//to_chan_details[to_x][to_y][to_No].arch_wire_switch;
+                        /* and now, finally, add this switchblock connection to the switchblock connections map */
+                        (*sb_conns)[sb_conn].push_back(to_wire_inf);
+
+                        inter++;
+                        break;
+                    }
+                }
+            }
+
+        }
+
+    }
+
+
     /* iterate over all the wire connections specified for this switch block */
     for (int iconn = 0; iconn < (int)sb->wireconns.size(); iconn++) {
         wireconn_ptr = &sb->wireconns[iconn];
         /* compute one type of wire connection each iteration */
         compute_each_conn(x_coord, y_coord, from_side, to_side, from_x, from_y, sb, nx, ny, from_chan_details,
-                          to_chan_details, to_x, to_y, from_chan_type, to_chan_type, wire_type_sizes,
-                          wireconn_ptr, sb_conns, directionality);
+                          to_chan_details, max_chan_width, to_x, to_y, from_chan_type, to_chan_type, wire_type_sizes,
+                          wireconn_ptr, sb_conns, directionality, &sb_conn);
     }
     from_chan_details = NULL;
     to_chan_details = NULL;
@@ -421,9 +474,9 @@ void compute_each_side(int x_coord, int y_coord, enum e_side from_side,enum e_si
 }
 
 void compute_each_conn(int x_coord, int y_coord, enum e_side from_side,enum e_side to_side, int from_x, int from_y,
-                       t_switchblock_inf *sb, int nx, int ny, t_chan_details *from_chan_details, t_chan_details *to_chan_details, int to_x, int to_y,
+                       t_switchblock_inf *sb, int nx, int ny, t_chan_details *from_chan_details, t_chan_details *to_chan_details, int max_chan_width, int to_x, int to_y,
                        t_rr_type from_chan_type, t_rr_type to_chan_type, t_wire_type_sizes *wire_type_sizes, t_wireconn_inf *wireconn_ptr,
-                       t_sb_connection_map *sb_conns,e_directionality directionality){
+                       t_sb_connection_map *sb_conns,e_directionality directionality, Switchblock_Lookup *sb_conn){
 
     int dest_W;                         /* the effective destination channel width is the size of the destination wire set */
     int src_wire_ind, dest_wire_ind;    /* the index of the source/destination wire within their own switchpoint set */
@@ -431,7 +484,7 @@ void compute_each_conn(int x_coord, int y_coord, enum e_side from_side,enum e_si
     vector<int> potential_src_wires;    /* vectors that will contain indices of the wires belonging to the source/dest wire types/points */
     vector<int> potential_dest_wires;
 
-    Switchblock_Lookup sb_conn(x_coord, y_coord, from_side, to_side,0);	/* for indexing into FPGA's switchblock map */
+
 
     /* names of wire types we may be connecting from/to */
     vector<string> *from_wire_type = &(wireconn_ptr->from_type);
@@ -439,7 +492,7 @@ void compute_each_conn(int x_coord, int y_coord, enum e_side from_side,enum e_si
 
     /* get the indices of wires with the destination subsegment number, as well as the effective destination
         channel width (which is the number of wires with the destination subsegment number) */
-    get_switchpoint_wires(nx, ny, to_chan_details[to_x][to_y], to_chan_type, to_x, to_y, sb_conn.to_side,
+    get_switchpoint_wires(nx, ny, to_chan_details[to_x][to_y], to_chan_type, to_x, to_y, sb_conn->to_side,
                           to_wire_type, &(wireconn_ptr->to_point), wire_type_sizes, true, &potential_dest_wires);
 
     if (0 == potential_dest_wires.size()){
@@ -449,7 +502,7 @@ void compute_each_conn(int x_coord, int y_coord, enum e_side from_side,enum e_si
     dest_W = (int)potential_dest_wires.size();
 
     /* get the index of the source wire relative to all the wires specified by the wireconn */
-    get_switchpoint_wires(nx, ny, from_chan_details[from_x][from_y], from_chan_type, from_x, from_y, sb_conn.from_side,
+    get_switchpoint_wires(nx, ny, from_chan_details[from_x][from_y], from_chan_type, from_x, from_y, sb_conn->from_side,
                           from_wire_type, &(wireconn_ptr->from_point), wire_type_sizes, false, &potential_src_wires);
 
     if (0 == potential_src_wires.size()){
@@ -462,10 +515,10 @@ void compute_each_conn(int x_coord, int y_coord, enum e_side from_side,enum e_si
      * ('potential_src_wires') should connect to */
     for(src_wire_ind = 0;src_wire_ind < (int)potential_src_wires.size();src_wire_ind++) {
 
-        sb_conn.from_wire = potential_src_wires[src_wire_ind];
+        sb_conn->from_wire = potential_src_wires[src_wire_ind];
 
         /* get a reference to the string vector containing desired side1->side2 permutations */
-        SB_Side_Connection side_conn(sb_conn.from_side, sb_conn.to_side);
+        SB_Side_Connection side_conn(sb_conn->from_side, sb_conn->to_side);
         vector<string> &permutations_ref = sb->permutation_map[side_conn];
 
         /* iterate over the permutation functions specified in permutations_ref */
@@ -489,16 +542,42 @@ void compute_each_conn(int x_coord, int y_coord, enum e_side from_side,enum e_si
 
             /* the resulting wire number is the *index* of the destination wire in it's own
                set, so we need to convert that back to the absolute index of the wire in the channel */
+
+            int d_wire=0;
+//            for(vector<int>::iterator it=potential_dest_wires.begin();it<potential_dest_wires.end();it++){
+//                d_wire=potential_dest_wires[it-potential_dest_wires.begin()];
+//                if(to_chan_details[to_x][to_y][d_wire].pent_type_ptr->isPent && to_chan_details[to_x][to_y][d_wire].pent_type_ptr->NoInPatt>0){
+//                    potential_dest_wires.erase(it);
+//                }
+//            }
+
+            for(vector<int>::iterator it=potential_dest_wires.begin();it<potential_dest_wires.end();it++){
+                d_wire=potential_dest_wires[it-potential_dest_wires.begin()];
+                if(to_chan_details[to_x][to_y][d_wire].pent_type_ptr->isPent && to_chan_details[to_x][to_y][d_wire].pent_type_ptr->NoInPatt>0){
+                    printf("NOT SUCCESSFUL.\n");
+                }
+            }
+
             int to_wire = potential_dest_wires[dest_wire_ind];
 
-            /* create the struct containing information about the target wire segment which will be added to the
-               sb connections map */
             t_to_wire_inf to_wire_inf;
-            to_wire_inf.to_wire = (short)to_wire;
-            to_wire_inf.switch_ind = to_chan_details[to_x][to_y][to_wire].arch_wire_switch;
+            /* 如果是pentline就不连接 */
+//            if(to_chan_details[to_x][to_y][to_wire].pent_type_ptr->isPent && to_chan_details[to_x][to_y][to_wire].pent_type_ptr->NoInPatt>0){
+//                int temp=dest_wire_ind;
+//                while(to_chan_details[to_x][to_y][to_wire].pent_type_ptr->isPent && to_chan_details[to_x][to_y][to_wire].pent_type_ptr->NoInPatt>0) {
+//                    temp++;
+//                    temp%=potential_dest_wires.size();
+//                    to_wire=potential_dest_wires[temp];
+//                }
+//            } else {
+                /* create the struct containing information about the target wire segment which will be added to the
+                   sb connections map */
+                to_wire_inf.to_wire = (short) to_wire;
+                to_wire_inf.switch_ind = to_chan_details[to_x][to_y][to_wire].arch_wire_switch;
+                /* and now, finally, add this switchblock connection to the switchblock connections map */
+                (*sb_conns)[*sb_conn].push_back(to_wire_inf);
+//            }
 
-            /* and now, finally, add this switchblock connection to the switchblock connections map */
-            (*sb_conns)[sb_conn].push_back(to_wire_inf);
 
             /* If bidir architecture, implement the reverse connection as well */
             if (BI_DIRECTIONAL == directionality) {
@@ -507,12 +586,14 @@ void compute_each_conn(int x_coord, int y_coord, enum e_side from_side,enum e_si
                 //Mark so coverity ignores this issue
                 //
                 //coverity[swapped_arguments]
-                Switchblock_Lookup sb_conn_reverse(sb_conn.x_coord, sb_conn.y_coord,
-                                                   sb_conn.to_side, sb_conn.from_side,
+                Switchblock_Lookup sb_conn_reverse(sb_conn->x_coord, sb_conn->y_coord,
+                                                   sb_conn->to_side, sb_conn->from_side,
                                                    to_wire);
                 (*sb_conns)[sb_conn_reverse].push_back(to_wire_inf);
             }
         }
+
+
     }
 
 }
@@ -1117,11 +1198,13 @@ static void get_switchpoint_wires(int nx, int ny, t_seg_details *chan_details,
                 }
             }
 
-            int wire_switchpoint = get_switchpoint_of_wire(nx, ny, chan_type, chan_details[iwire], seg_coord, side);
+            int wire_switchpoint = get_switchpoint_of_wire(nx, ny, chan_type, chan_details[iwire], seg_coord, side, false);
 
             /* check if this wire belongs to one of the specified switchpoints; add it to our 'wires' vector if so */
             if ( find( points->begin(), points->end(), wire_switchpoint ) != points->end() ){
-                wires->push_back( iwire );
+                if(!(is_dest && chan_details[iwire].pent_type_ptr->isPent && chan_details[iwire].pent_type_ptr->NoInPatt>0)) {
+                    wires->push_back(iwire);
+                }
             }
         }
     }
@@ -1298,7 +1381,7 @@ int get_wire_segment_length(int nx, int ny, e_rr_type chan_type, t_seg_details &
 /* Returns the switchpoint of the wire specified by wire_details at a segment coordinate
    of seg_coord, and connection to the sb_side of the switchblock */
 static int get_switchpoint_of_wire(int nx, int ny, e_rr_type chan_type,
-                                   t_seg_details &wire_details, int seg_coord, e_side sb_side){
+                                   t_seg_details &wire_details, int seg_coord, e_side sb_side, bool IsForPent){
 
     /* this function calculates the switchpoint of a given wire by first calculating
        the subsegmennt number of the specified wire. For instance, for a wire with L=4:
@@ -1328,8 +1411,8 @@ static int get_switchpoint_of_wire(int nx, int ny, e_rr_type chan_type,
         perimeter_connection = true;
     }
 
-    if (perimeter_connection){
-        switchpoint = 0;
+    if (perimeter_connection && !IsForPent){
+            switchpoint = 0;
     } else {
         int wire_length = get_wire_segment_length(nx, ny, chan_type, wire_details);
         int subsegment_num = get_wire_subsegment_num(nx, ny, chan_type, wire_details, seg_coord);

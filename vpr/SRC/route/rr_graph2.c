@@ -13,6 +13,7 @@ using namespace std;
 #include "rr_graph2.h"
 #include "rr_graph_sbox.h"
 #include "read_xml_arch_file.h"
+#include "SetupPentLine.h"
 
 #define UN_SET -1
 
@@ -165,6 +166,68 @@ int *get_seg_track_counts(
 	return result;
 }
 
+int floor(float d) {
+	return (int)(d-float(int(d*10)%10)/10);
+}
+
+void sub_set_all_rod_segnum(t_pent_seg_type_info *pent_ptr){
+	if(pent_ptr->numSubEdges > 0){
+		for(int i=0;i<pent_ptr->numSubEdges;i++){
+			pent_ptr->SubEdges->numSets_per_chan = pent_ptr->numSets_per_chan / pent_ptr->Length * pent_ptr->SubEdges->Length;
+			sub_set_all_rod_segnum(pent_ptr->SubEdges);
+		}
+	}
+}
+void set_all_rod_segnum(int* sets_per_seg_type, int numSegType, const t_segment_inf * segment_inf){
+	for(int i=0;i<PENTYPE;i++){
+		sub_set_all_rod_segnum(&pent_type[i]);
+	}
+	for(int i=0;i<numSegType;i++){
+		int tp = lp_map[segment_inf[i].length].rodNum;
+		int sub_sum=0;
+		t_pent_seg_type_info *S_ptr = NULL;
+		for(int j=0;j<tp;j++){
+			if(lp_map[segment_inf[i].length].ptype_list[j]->isPent){
+				sub_sum += lp_map[segment_inf[i].length].ptype_list[j]->numSets_per_chan;
+			}else{
+				S_ptr = lp_map[segment_inf[i].length].ptype_list[j];
+			}
+		}
+
+		if(S_ptr == NULL && sub_sum>0){
+			/*修改真实值为ｐｅｎｔｌｉｎｅ之和*/
+			if(sets_per_seg_type[i] != sub_sum){
+				printf("The %d-st seg type sets number in each chan has been changed to %d. ",i,sub_sum);
+			}
+			sets_per_seg_type[i] = sub_sum;
+			lp_map[segment_inf[i].length].seg_sum=sub_sum;
+			lp_map[segment_inf[i].length].pent_sum=sub_sum;
+		}else if(S_ptr != NULL && sub_sum == 0){
+			/* change the value within S_ptr to the right value. */
+			S_ptr->numSets_per_chan = sets_per_seg_type[i];
+			lp_map[segment_inf[i].length].seg_sum=sets_per_seg_type[i];
+			lp_map[segment_inf[i].length].pent_sum=0;
+		}else{
+			/* value in S_ptr equals to the number in segment info minus sub_sum. */
+			S_ptr->numSets_per_chan = sets_per_seg_type[i] - sub_sum;
+			lp_map[segment_inf[i].length].seg_sum=sets_per_seg_type[i];
+			lp_map[segment_inf[i].length].pent_sum=sub_sum;
+		}
+
+	}
+}
+
+void adjust_seg_num(int *sets_per_seg_type, int *max_chan_width, int numSegType){
+	int temp=0;
+	for(int i=0;i<numSegType;i++) {
+		temp += sets_per_seg_type[i];
+	}
+	if(*max_chan_width != 2*temp){
+		printf("max_chan_width has been changed from %d to %d. ", *max_chan_width, temp);
+	}
+	*max_chan_width = 2*temp;
+}
+
 t_seg_details *alloc_and_load_seg_details(
 		int *max_chan_width, const int max_len,
 		const int num_seg_types, const t_segment_inf * segment_inf,
@@ -201,6 +264,17 @@ t_seg_details *alloc_and_load_seg_details(
 	sets_per_seg_type = get_seg_track_counts((*max_chan_width / fac),
 			num_seg_types, segment_inf, use_full_seg_groups);
 
+	int tp=0;
+	for(int PT=0;PT<PENTYPE;PT++){
+		tp=0;
+		while(segment_inf[tp].length!=pent_type[PT].Length){tp++;}
+		VTR_ASSERT(tp<num_seg_types);
+		tp=floor(sets_per_seg_type[tp] * pent_type[PT].freq_in_chan);
+		pent_type[PT].numSets_per_chan = tp - tp % pent_type[PT].Length;
+	}
+	set_all_rod_segnum(sets_per_seg_type, num_seg_types, segment_inf);
+	adjust_seg_num(sets_per_seg_type, max_chan_width, num_seg_types);
+
 	/* Count the number tracks actually assigned. */
 	tmp = 0;
 	for (i = 0; i < num_seg_types; ++i) {
@@ -235,8 +309,14 @@ t_seg_details *alloc_and_load_seg_details(
 
 		/* Set up the tracks of same type */
 		group_start = 0;
+		int sub_len=0;
+		int sub_len_p=0;
 		for (itrack = 0; itrack < ntracks; itrack++) {
 
+			if(sub_len_p>=lp_map[segment_inf[i].length].ptype_list[sub_len]->numSets_per_chan*fac){
+				sub_len++;
+				sub_len_p=0;
+			}
 			/* set the name of the segment type this track belongs to */
 			seg_details[cur_track].type_name_ptr = segment_inf[i].name;
 
@@ -320,8 +400,10 @@ t_seg_details *alloc_and_load_seg_details(
 			}
 
 			seg_details[cur_track].index = i;
-
+			/*each seg point to a specific pent line rod. */
+			seg_details[cur_track].pent_type_ptr=lp_map[segment_inf[i].length].ptype_list[sub_len];
 			++cur_track;
+			++sub_len_p;
 		}
 	} /* End for each segment type. */
 
@@ -421,7 +503,7 @@ t_chan_details* init_chan_details(
 
 				p_seg_details[i].index = seg_details[i].index;
 				p_seg_details[i].type_name_ptr = seg_details[i].type_name_ptr;
-
+				p_seg_details[i].pent_type_ptr = seg_details[i].pent_type_ptr;
 				if (seg_details_type == SEG_DETAILS_X) {
 					if (i >= nodes_per_chan->x_list[y]) {
 						p_seg_details[i].length = 0;
@@ -2483,6 +2565,9 @@ static int *label_wire_muxes(
 
 		/* Find the tracks that are starting. */
 		for (itrack = 0; itrack < max_chan_width; ++itrack) {
+            if(seg_details[itrack].pent_type_ptr->isPent && seg_details[itrack].pent_type_ptr->NoInPatt>0)
+                continue;
+
 			start = get_seg_start(seg_details, itrack, chan_num, seg_num);
 			end = get_seg_end(seg_details, itrack, start, chan_num, max_len);
 

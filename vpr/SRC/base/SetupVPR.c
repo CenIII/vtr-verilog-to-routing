@@ -202,6 +202,9 @@ void SetupVPR(t_options *Options, const bool TimingEnabled,
 	}
 	VTR_ASSERT(EMPTY_TYPE != NULL && FILL_TYPE != NULL && IO_TYPE != NULL);
 
+	for(int NoSeg=0;NoSeg<Arch->num_segments;NoSeg++){
+        Arch->Segments[NoSeg].frequency = (int)(10000* lp_map[Arch->Segments[NoSeg].length].freq);
+    }
 	*Segments = Arch->Segments;
 	RoutingArch->num_segment = Arch->num_segments;
 

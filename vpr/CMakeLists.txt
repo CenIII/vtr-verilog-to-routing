@@ -20,7 +20,7 @@ set_source_files_properties(SRC/timing/slre.c
 #Create the library
 add_library(libvpr STATIC
              ${LIB_HEADERS}
-             ${LIB_SOURCES})
+             ${LIB_SOURCES} SRC/base/SetupPentLine.cpp SRC/base/SetupPentLine.h)
 target_include_directories(libvpr PUBLIC ${LIB_INCLUDE_DIRS})
 set_target_properties(libvpr PROPERTIES PREFIX "") #Avoid extra 'lib' prefix
 

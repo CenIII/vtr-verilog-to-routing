@@ -786,6 +786,8 @@ struct s_router_opts {
 	enum e_routing_failure_predictor routing_failure_predictor;
 };
 
+
+
 /* Defines the detailed routing architecture of the FPGA.  Only important   *
  * if the route_type is DETAILED.                                           *
  * (UDSD by AY) directionality: Should the tracks be uni-directional or     *
@@ -844,6 +846,49 @@ enum e_direction {
 	INC_DIRECTION = 0, DEC_DIRECTION = 1, BI_DIRECTION = 2
 };
 
+/* Uncomment lines below to save some memory, at the cost of debugging ease. */
+/*enum e_rr_type {SOURCE, SINK, IPIN, OPIN, CHANX, CHANY}; */
+/* typedef short t_rr_type */
+
+/* Type of a routing resource node.  x-directed channel segment,   *
+ * y-directed channel segment, input pin to a clb to pad, output   *
+ * from a clb or pad (i.e. output pin of a net) and:               *
+ * SOURCE:  A dummy node that is a logical output within a block   *
+ *          -- i.e., the gate that generates a signal.             *
+ * SINK:    A dummy node that is a logical input within a block    *
+ *          -- i.e. the gate that needs a signal.                  */
+
+typedef enum e_rr_type {
+	SOURCE = 0, SINK, IPIN, OPIN, CHANX, CHANY, INTRA_CLUSTER_EDGE, NUM_RR_TYPES
+} t_rr_type;
+const std::vector<const char*> node_typename {
+		"SOURCE", "SINK", "IPIN", "OPIN", "CHANX", "CHANY", "ICE"
+};
+
+/* New defined structure serving for the 2-D Segment.*/
+typedef struct s_pent_seg_type_info t_pent_seg_type_info;
+struct s_pent_seg_type_info {
+	bool isPent;
+	int Length;
+	int NoInPatt;
+	enum e_rr_type XorY;
+	enum e_direction Direction;
+	t_pent_seg_type_info *SubEdges;
+	int numSubEdges;
+	float PatFreq;
+    float freq_in_chan;
+    int numSets_per_chan;
+};
+
+/* Map from length to a specific rod. */
+typedef struct s_len_to_pent_map t_len_to_pent_map;
+struct s_len_to_pent_map{
+	int rodNum;
+	t_pent_seg_type_info **ptype_list;
+    float freq;
+	int seg_sum;
+	int pent_sum;
+};
 /* Lists detailed information about segmentation.  [0 .. W-1].              *
  * length:  length of segment.                                              *
  * start:  index at which a segment starts in channel 0.                    *
@@ -891,6 +936,7 @@ typedef struct s_seg_details {
 	int index;
 	float Cmetal_per_m; /* Used for power */
 	const char *type_name_ptr;
+	t_pent_seg_type_info *pent_type_ptr;
 } t_seg_details;
 
 /* Defines a 2-D array of t_seg_details data structures (one per channel)   */
@@ -905,24 +951,7 @@ struct s_linked_f_pointer {
 	float *fptr;
 };
 
-/* Uncomment lines below to save some memory, at the cost of debugging ease. */
-/*enum e_rr_type {SOURCE, SINK, IPIN, OPIN, CHANX, CHANY}; */
-/* typedef short t_rr_type */
 
-/* Type of a routing resource node.  x-directed channel segment,   *
- * y-directed channel segment, input pin to a clb to pad, output   *
- * from a clb or pad (i.e. output pin of a net) and:               *
- * SOURCE:  A dummy node that is a logical output within a block   *
- *          -- i.e., the gate that generates a signal.             *
- * SINK:    A dummy node that is a logical input within a block    *
- *          -- i.e. the gate that needs a signal.                  */
-
-typedef enum e_rr_type {
-	SOURCE = 0, SINK, IPIN, OPIN, CHANX, CHANY, INTRA_CLUSTER_EDGE, NUM_RR_TYPES
-} t_rr_type;
-const std::vector<const char*> node_typename {
-	"SOURCE", "SINK", "IPIN", "OPIN", "CHANX", "CHANY", "ICE"
-};
 /* Basic element used to store the traceback (routing) of each net.        *
  * index:   Array index (ID) of this routing resource node.                *
  * iswitch: Index of the switch type used to go from this rr_node to       *
