@@ -91,7 +91,7 @@
     </switchlist>
     <segmentlist>
       <segment freq="0.85" name="l1s" length="1" type="unidir" Rmetal="87" Cmetal="0.0">
-        <mux name="l1s_mux"/>
+        <mux name="l2s_mux"/>
         <sb type="pattern">1 1</sb>
         <cb type="pattern">1</cb>
       </segment>

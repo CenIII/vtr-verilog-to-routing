@@ -434,7 +434,7 @@ void compute_each_side(int x_coord, int y_coord, enum e_side from_side,enum e_si
                 (get_switchpoint_of_wire(nx, ny, from_chan_type, from_chan_details[from_x][from_y][from_No], from_chan_type == CHANX? from_x:from_y, from_side, true) == 0)) {
 
 
-            for(int to_No = inter; to_No < max_chan_width; to_No++, inter++){
+            for(int to_No = inter%max_chan_width; to_No < max_chan_width; to_No++, inter++){
                 e_direction dt = to_chan_details[to_x][to_y][to_No].direction;
                 if(((dt==DEC_DIRECTION && (to_side==LEFT || to_side==BOTTOM))||
                     (dt==INC_DIRECTION && (to_side==TOP || to_side==RIGHT))) &&
