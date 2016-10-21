@@ -445,7 +445,7 @@ void compute_each_side(int x_coord, int y_coord, enum e_side from_side,enum e_si
                         t_to_wire_inf to_wire_inf;
                         to_wire_inf.to_wire = (short) to_No;
                         /* TODO: find the right switch type number for the hard wire. and make the assignment. */
-                        to_wire_inf.switch_ind = 3;//to_chan_details[to_x][to_y][to_No].arch_wire_switch;
+                        to_wire_inf.switch_ind = 4;//to_chan_details[to_x][to_y][to_No].arch_wire_switch;
                         /* and now, finally, add this switchblock connection to the switchblock connections map */
                         (*sb_conns)[sb_conn].push_back(to_wire_inf);
 
