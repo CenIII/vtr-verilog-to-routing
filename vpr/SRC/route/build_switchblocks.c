@@ -509,15 +509,41 @@ void compute_each_conn(int x_coord, int y_coord, enum e_side from_side,enum e_si
         return;
     }
 
+    e_direction to_direction;
+    if(to_side == TOP || to_side == RIGHT)
+        to_direction = INC_DIRECTION;
+    else
+        to_direction = DEC_DIRECTION;
+
     /* iterate in the potential source wires under the given wire connection.
      * at this point the vectors 'potential_src_wires' and 'potential_dest_wires' contain the indices of the from_type/from_point
      * and to_type/to_point wire segments. now its time to compute which destination wire segments our specific wire segment of interest
      * ('potential_src_wires') should connect to */
     for(src_wire_ind = 0;src_wire_ind < (int)potential_src_wires.size();src_wire_ind++) {
 
+        /* if this is a pent rod having already a sub_rod in this target channel(or target side), forgo it. */
         sb_conn->from_wire = potential_src_wires[src_wire_ind];
+        t_seg_details from_details = from_chan_details[from_x][from_y][sb_conn->from_wire];
+        e_direction d = from_details.direction;
+        bool quit=false;
+        if(((d==INC_DIRECTION && (from_side==LEFT || from_side==BOTTOM))||
+            (d==DEC_DIRECTION && (from_side==TOP || from_side==RIGHT))) &&
+                from_details.pent_type_ptr->isPent &&
+                from_details.pent_type_ptr->numSubEdges > 0 &&
+           (get_switchpoint_of_wire(nx, ny, from_chan_type, from_chan_details[from_x][from_y][sb_conn->from_wire], from_chan_type == CHANX? from_x:from_y, from_side, true) == 0)) {
+            for(int i=0;i<from_details.pent_type_ptr->numSubEdges;i++){
+                if(((d == from_details.pent_type_ptr->Direction) == (to_direction == from_details.pent_type_ptr->SubEdges[i].Direction)) &&
+                       ((from_chan_type == from_details.pent_type_ptr->XorY) == (to_chan_type == from_details.pent_type_ptr->SubEdges[i].XorY))){
+                    quit=true;
+                }
 
-        /* get a reference to the string vector containing desired side1->side2 permutations */
+            }
+
+        }
+        if(quit)
+            continue;
+
+            /* get a reference to the string vector containing desired side1->side2 permutations */
         SB_Side_Connection side_conn(sb_conn->from_side, sb_conn->to_side);
         vector<string> &permutations_ref = sb->permutation_map[side_conn];
 
