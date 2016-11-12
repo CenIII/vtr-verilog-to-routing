@@ -102,11 +102,11 @@
         <cb type="pattern">1 1</cb>
       </segment>
       <!-- 15% length-4 wires on the global metal layer -->
-      <segment freq="0.15" name="l4g" length="4" type="unidir" Rmetal="23" Cmetal="0.0">
+      <!-- <segment freq="0.15" name="l4g" length="4" type="unidir" Rmetal="23" Cmetal="0.0">
         <mux name="l4g_mux"/>
         <sb type="pattern">1 1 1 1 1</sb>
         <cb type="pattern">1 0 0 0</cb>
-      </segment>
+      </segment> -->
     </segmentlist>
 
     <!-- Define custom switch blocks -->
@@ -123,10 +123,12 @@
         <func type="tr" formula="t+1"/>
         <func type="rb" formula="W-t-2"/>
       </switchfuncs>
-      <wireconn from_type="l1s" to_type="l2s,l1s" from_switchpoint="0" to_switchpoint="0"/>
-      <wireconn from_type="l2s" to_type="l2s,l1s" from_switchpoint="0,1" to_switchpoint="0"/>
-      <wireconn from_type="l4g" to_type="l4g" from_switchpoint="0" to_switchpoint="0"/>
-      <wireconn from_type="l4g" to_type="l2s,l1s" from_switchpoint="0" to_switchpoint="0"/>
+      <!-- <wireconn from_type="l1s" to_type="l2s,l1s" from_switchpoint="0" to_switchpoint="0"/> -->
+      <wireconn from_type="l1s,l2s" to_type="l1s,l2s" from_switchpoint="0" to_switchpoint="0"/>
+      <wireconn from_type="l2s" to_type="l1s,l2s" from_switchpoint="1" to_switchpoint="0"/>
+      <!-- <wireconn from_type="l2s" to_type="l1s,l2s" from_switchpoint="0" to_switchpoint="0"/> -->
+      <!-- <wireconn from_type="l4g" to_type="l4g" from_switchpoint="0" to_switchpoint="0"/>
+      <wireconn from_type="l4g" to_type="l2s,l1s" from_switchpoint="0" to_switchpoint="0"/> -->
     </switchblock>
 
     <switchblock name="wilton_turn_perimeter" type="unidir">
@@ -141,10 +143,10 @@
         <func type="tr" formula="t+1"/>
         <func type="rb" formula="W-t-2"/>
       </switchfuncs>
-      <wireconn from_type="l1s" to_type="l2s,l1s" from_switchpoint="0" to_switchpoint="0"/>
-      <wireconn from_type="l2s" to_type="l2s,l1s" from_switchpoint="0,1" to_switchpoint="0"/>
-      <wireconn from_type="l4g" to_type="l4g" from_switchpoint="0" to_switchpoint="0"/>
-      <wireconn from_type="l4g" to_type="l2s,l1s" from_switchpoint="0" to_switchpoint="0"/>
+      <wireconn from_type="l1s,l2s" to_type="l1s,l2s" from_switchpoint="0" to_switchpoint="0"/>
+      <wireconn from_type="l2s" to_type="l1s,l2s" from_switchpoint="1" to_switchpoint="0"/>
+      <!-- <wireconn from_type="l4g" to_type="l4g" from_switchpoint="0" to_switchpoint="0"/>
+      <wireconn from_type="l4g" to_type="l2s,l1s" from_switchpoint="0" to_switchpoint="0"/> -->
     </switchblock>
 
     <switchblock name="wilton_straight" type="unidir">
@@ -157,8 +159,9 @@
       </switchfuncs>
       <wireconn from_type="l1s" to_type="l1s,l2s" from_switchpoint="0" to_switchpoint="0"/>
       <wireconn from_type="l2s" to_type="l1s,l2s" from_switchpoint="0" to_switchpoint="0"/>
-      <wireconn from_type="l4g" to_type="l4g" from_switchpoint="0" to_switchpoint="0"/>
-      <wireconn from_type="l4g" to_type="l1s,l2s" from_switchpoint="0" to_switchpoint="0"/>
+
+      <!-- <wireconn from_type="l4g" to_type="l4g" from_switchpoint="0" to_switchpoint="0"/>
+      <wireconn from_type="l4g" to_type="l1s,l2s" from_switchpoint="0" to_switchpoint="0"/> -->
     </switchblock>
   </switchblocklist>
 
@@ -193,7 +196,7 @@
         </mode>
 
         <fc default_in_type="frac" default_in_val="0.200000" default_out_type="frac" default_out_val="0.200000">
-		<segment name="l4g" in_val="0" out_val="0.200000"/>
+		<!--segment name="l4g" in_val="0" out_val="0.200000"/-->
 	</fc>
 
         <!-- IOs go on the periphery of the FPGA, for consistency, 
@@ -287,7 +290,7 @@
       </interconnect>
 
         <fc default_in_type="frac" default_in_val="0.200000" default_out_type="frac" default_out_val="0.200000">
-		<segment name="l4g" in_val="0" out_val="0.200000"/>
+		<!--segment name="l4g" in_val="0" out_val="0.200000"/-->
 	</fc>
 
       <pinlocations pattern="spread"/>
@@ -480,7 +483,7 @@
       </mode>
 
         <fc default_in_type="frac" default_in_val="0.200000" default_out_type="frac" default_out_val="0.200000">
-		<segment name="l4g" in_val="0" out_val="0.200000"/>
+		<!--segment name="l4g" in_val="0" out_val="0.200000"/-->
 	</fc>
       <pinlocations pattern="spread"/>
 
@@ -988,7 +991,7 @@
 
 
         <fc default_in_type="frac" default_in_val="0.200000" default_out_type="frac" default_out_val="0.200000">
-		<segment name="l4g" in_val="0" out_val="0.200000"/>
+		<!--segment name="l4g" in_val="0" out_val="0.200000"/-->
 	</fc>
       <pinlocations pattern="spread"/>
 

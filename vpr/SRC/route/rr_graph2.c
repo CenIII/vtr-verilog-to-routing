@@ -100,7 +100,7 @@ void dump_seg_details(
  * and end up with a result that uses fewer tracks than given. */
 int *get_seg_track_counts(
 		const int num_sets, const int num_seg_types,
-		const t_segment_inf * segment_inf, 
+		const t_segment_inf * segment_inf,
 		const bool use_full_seg_groups) {
 
 	int *result;
@@ -110,6 +110,7 @@ int *get_seg_track_counts(
 
 	result = (int *) vtr::malloc(sizeof(int) * num_seg_types);
 	demand = (double *) vtr::malloc(sizeof(double) * num_seg_types);
+
 
 	/* Scale factor so we can divide by any length
 	 * and still use integers */
@@ -260,6 +261,8 @@ t_seg_details *alloc_and_load_seg_details(
 	}
 	VTR_ASSERT(*max_chan_width % fac == 0);
 
+
+
 	/* Map segment type fractions and groupings to counts of tracks */
 	sets_per_seg_type = get_seg_track_counts((*max_chan_width / fac),
 			num_seg_types, segment_inf, use_full_seg_groups);
@@ -274,6 +277,40 @@ t_seg_details *alloc_and_load_seg_details(
 	}
 	set_all_rod_segnum(sets_per_seg_type, num_seg_types, segment_inf);
 	adjust_seg_num(sets_per_seg_type, max_chan_width, num_seg_types);
+
+
+
+
+    /*专门为４　ｔｏ　４准备,转移短线的直线到长线去*/
+    int sumStraight=0;
+    bool flag=false;
+    for(int kk=0;kk<MAXLENGTH+1;kk+=1){
+        if(lp_map[kk].rodNum>1){
+            int p;
+            for(p=0;p<lp_map[kk].rodNum;p++)
+                if(!lp_map[kk].ptype_list[p]->isPent)
+                    break;
+
+            sumStraight = lp_map[kk].ptype_list[p]->numSets_per_chan;
+            flag = true;
+            lp_map[kk].ptype_list[p]->numSets_per_chan=0;
+            lp_map[kk].seg_sum = lp_map[kk].pent_sum;
+            tp=0;
+            while(segment_inf[tp].length!=kk){tp++;}
+            sets_per_seg_type[tp]=lp_map[kk].seg_sum;
+        }
+        if(flag && lp_map[kk].rodNum==1){
+            lp_map[kk].seg_sum+=sumStraight;
+            lp_map[kk].ptype_list[0]->numSets_per_chan += sumStraight;
+            tp=0;
+            while(segment_inf[tp].length!=kk){tp++;}
+            sets_per_seg_type[tp]=lp_map[kk].seg_sum;
+            break;
+        }
+    }
+
+
+
 
 	/* Count the number tracks actually assigned. */
 	tmp = 0;

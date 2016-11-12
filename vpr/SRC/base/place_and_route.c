@@ -32,7 +32,7 @@ using namespace std;
 #include "place_macro.h"
 #include "netlist_writer.h"
 #include "power.h"
-
+#include "SetupPentLine.h"
 
 /******************* Subroutines local to this module ************************/
 
@@ -93,133 +93,147 @@ bool place_and_route(struct s_placer_opts placer_opts, char *place_file, char *n
 		vtr::printf_info("Placement took %g seconds.\n", (float)(end - begin) / CLOCKS_PER_SEC);
 
 	}
-	begin = clock();
-	post_place_sync(num_blocks);
 
-	fflush(stdout);
+	for(int p=0;p<100;p+=10) {
 
-	int width_fac = router_opts.fixed_channel_width;
+		SetPentFreq(1,100-p);
+		SetPentFreq(2,p);
+		SetPentFreq(3,p);
+		SetupPentLine();
 
-	/* build rr graph and return if we're not doing routing */
-	if (!router_opts.doRouting) {
-		if(width_fac != NO_FIXED_CHANNEL_WIDTH) {
-		    //Only try if a fixed channel width is specified
-		    try_graph(width_fac, router_opts, det_routing_arch, 
-			    segment_inf, chan_width_dist,
-			    directs, num_directs);
-		}
-		return(true);
-	}
-
-	/* If channel width not fixed, use binary search to find min W */
-	if (NO_FIXED_CHANNEL_WIDTH == width_fac) {
-        //Binary search for the min channel width
-		g_solution_inf.channel_width = binary_search_place_and_route(placer_opts, place_file, net_file,
-				arch_file, route_file, router_opts.full_stats,
-				router_opts.verify_binary_search, annealing_sched, router_opts,
-				det_routing_arch, segment_inf, timing_inf, chan_width_dist,
-				directs, num_directs);
-		success = (g_solution_inf.channel_width > 0 ? true : false);
-	} else {
-        //Route at the specified channel width
-		g_solution_inf.channel_width = width_fac;
-		if (det_routing_arch->directionality == UNI_DIRECTIONAL) {
-			if (width_fac % 2 != 0) {
-				vpr_throw(VPR_ERROR_ROUTE, __FILE__, __LINE__, 
-						"in pack_place_and_route.c: Given odd chan width (%d) for udsd architecture.\n",
-						width_fac);
-			}
-		}
-		/* Other constraints can be left to rr_graph to check since this is one pass routing */
-
-		/* Allocate the major routing structures. */
-
-		clb_opins_used_locally = alloc_route_structs();
-
-		t_slack *slacks = alloc_and_load_timing_graph(timing_inf);
-		float **net_delay = alloc_net_delay(&net_delay_ch, g_clbs_nlist.net, g_clbs_nlist.net.size());
-
-		success = try_route(width_fac, router_opts, det_routing_arch,
-				segment_inf, timing_inf, net_delay, slacks, chan_width_dist,
-				clb_opins_used_locally, directs, num_directs);
-
-		if (success == false) {
-            
-			vtr::printf_info("Circuit is unroutable with a channel width factor of %d.\n", width_fac);
-			sprintf(msg, "Routing failed with a channel width factor of %d. ILLEGAL routing shown.", width_fac);
-		} else {
-			check_route(router_opts.route_type, g_num_rr_switches, clb_opins_used_locally);
-			get_serial_num();
-
-			vtr::printf_info("Circuit successfully routed with a channel width factor of %d.\n", width_fac);
-
-			routing_stats(router_opts.full_stats, router_opts.route_type,
-					g_num_rr_switches, segment_inf,
-					det_routing_arch->num_segment, det_routing_arch->R_minW_nmos,
-					det_routing_arch->R_minW_pmos,
-					det_routing_arch->directionality,
-					det_routing_arch->wire_to_rr_ipin_switch,
-					timing_inf.timing_analysis_enabled, net_delay, slacks, timing_inf);
-
-			print_route(route_file);
-
-			if (getEchoEnabled() && isEchoFileEnabled(E_ECHO_ROUTING_SINK_DELAYS)) {
-				print_sink_delays(getEchoFileName(E_ECHO_ROUTING_SINK_DELAYS));
-			}
-
-			sprintf(msg, "Routing succeeded with a channel width factor of %d.\n\n", width_fac);
+		for(int NoSeg=0;NoSeg<det_routing_arch->num_segment;NoSeg++){
+			segment_inf[NoSeg].frequency = (int)(10000* lp_map[segment_inf[NoSeg].length].freq);
 		}
 
-		init_draw_coords(max_pins_per_clb);
-		update_screen(MAJOR, msg, ROUTING, timing_inf.timing_analysis_enabled, timing_inf);
-		
-        VTR_ASSERT(slacks->slack);
-
-        if(GetPostSynthesisOption())
-        {
-            netlist_writer(blif_circuit_name);
-        }
-
-        free_timing_graph(slacks);
-
-        VTR_ASSERT(net_delay);
-        free_net_delay(net_delay, &net_delay_ch);
+		begin = clock();
+		post_place_sync(num_blocks);
 
 		fflush(stdout);
-	}
 
-	if (clb_opins_used_locally != NULL) {
-		for (int i = 0; i < num_blocks; ++i) {
-			free_ivec_vector(clb_opins_used_locally[i], 0,
-					block[i].type->num_class - 1);
+		int width_fac = router_opts.fixed_channel_width;
+
+		/* build rr graph and return if we're not doing routing */
+		if (!router_opts.doRouting) {
+			if (width_fac != NO_FIXED_CHANNEL_WIDTH) {
+				//Only try if a fixed channel width is specified
+				try_graph(width_fac, router_opts, det_routing_arch,
+						  segment_inf, chan_width_dist,
+						  directs, num_directs);
+			}
+			return (true);
 		}
-		free(clb_opins_used_locally);
-		clb_opins_used_locally = NULL;
+
+		/* If channel width not fixed, use binary search to find min W */
+		if (NO_FIXED_CHANNEL_WIDTH == width_fac) {
+			//Binary search for the min channel width
+			g_solution_inf.channel_width = binary_search_place_and_route(placer_opts, place_file, net_file,
+																		 arch_file, route_file, router_opts.full_stats,
+																		 router_opts.verify_binary_search,
+																		 annealing_sched, router_opts,
+																		 det_routing_arch, segment_inf, timing_inf,
+																		 chan_width_dist,
+																		 directs, num_directs);
+			success = (g_solution_inf.channel_width > 0 ? true : false);
+		} else {
+			//Route at the specified channel width
+			g_solution_inf.channel_width = width_fac;
+			if (det_routing_arch->directionality == UNI_DIRECTIONAL) {
+				if (width_fac % 2 != 0) {
+					vpr_throw(VPR_ERROR_ROUTE, __FILE__, __LINE__,
+							  "in pack_place_and_route.c: Given odd chan width (%d) for udsd architecture.\n",
+							  width_fac);
+				}
+			}
+			/* Other constraints can be left to rr_graph to check since this is one pass routing */
+
+			/* Allocate the major routing structures. */
+
+			clb_opins_used_locally = alloc_route_structs();
+
+			t_slack *slacks = alloc_and_load_timing_graph(timing_inf);
+			float **net_delay = alloc_net_delay(&net_delay_ch, g_clbs_nlist.net, g_clbs_nlist.net.size());
+
+			success = try_route(width_fac, router_opts, det_routing_arch,
+								segment_inf, timing_inf, net_delay, slacks, chan_width_dist,
+								clb_opins_used_locally, directs, num_directs);
+
+			if (success == false) {
+
+				vtr::printf_info("Circuit is unroutable with a channel width factor of %d.\n", width_fac);
+				sprintf(msg, "Routing failed with a channel width factor of %d. ILLEGAL routing shown.", width_fac);
+			} else {
+				check_route(router_opts.route_type, g_num_rr_switches, clb_opins_used_locally);
+				get_serial_num();
+
+				vtr::printf_info("Circuit successfully routed with a channel width factor of %d.\n", width_fac);
+
+				routing_stats(router_opts.full_stats, router_opts.route_type,
+							  g_num_rr_switches, segment_inf,
+							  det_routing_arch->num_segment, det_routing_arch->R_minW_nmos,
+							  det_routing_arch->R_minW_pmos,
+							  det_routing_arch->directionality,
+							  det_routing_arch->wire_to_rr_ipin_switch,
+							  timing_inf.timing_analysis_enabled, net_delay, slacks, timing_inf);
+
+				print_route(route_file);
+
+				if (getEchoEnabled() && isEchoFileEnabled(E_ECHO_ROUTING_SINK_DELAYS)) {
+					print_sink_delays(getEchoFileName(E_ECHO_ROUTING_SINK_DELAYS));
+				}
+
+				sprintf(msg, "Routing succeeded with a channel width factor of %d.\n\n", width_fac);
+			}
+
+			init_draw_coords(max_pins_per_clb);
+			update_screen(MAJOR, msg, ROUTING, timing_inf.timing_analysis_enabled, timing_inf);
+
+			VTR_ASSERT(slacks->slack);
+
+			if (GetPostSynthesisOption()) {
+				netlist_writer(blif_circuit_name);
+			}
+
+			free_timing_graph(slacks);
+
+			VTR_ASSERT(net_delay);
+			free_net_delay(net_delay, &net_delay_ch);
+
+			fflush(stdout);
+		}
+
+		if (clb_opins_used_locally != NULL) {
+			for (int i = 0; i < num_blocks; ++i) {
+				free_ivec_vector(clb_opins_used_locally[i], 0,
+								 block[i].type->num_class - 1);
+			}
+			free(clb_opins_used_locally);
+			clb_opins_used_locally = NULL;
+		}
+
+		/* Frees up all the data structure used in vpr_utils. */
+		free_port_pin_from_blk_pin();
+		free_blk_pin_from_port_pin();
+
+		end = clock();
+
+		vtr::printf_info("Routing took %g seconds.\n", (float) (end - begin) / CLOCKS_PER_SEC);
+
+		if (router_opts.switch_usage_analysis) {
+			print_switch_usage();
+		}
+		delete[] g_switch_fanin_remap;
+		g_switch_fanin_remap = NULL;
+
+		/*WMF: cleaning up memory usage */
+
+		/*	if (g_heap_free_head)
+            free(g_heap_free_head);
+        if (g_trace_free_head)
+            free(g_trace_free_head);
+        if (g_linked_f_pointer_free_head)
+            free(g_linked_f_pointer_free_head);*/
+
 	}
-
-	/* Frees up all the data structure used in vpr_utils. */
-	free_port_pin_from_blk_pin();
-	free_blk_pin_from_port_pin();
-
-	end = clock();    
-
-	vtr::printf_info("Routing took %g seconds.\n", (float)(end - begin) / CLOCKS_PER_SEC);
-
-    if (router_opts.switch_usage_analysis) {
-        print_switch_usage();
-    }
-    delete [] g_switch_fanin_remap;
-    g_switch_fanin_remap = NULL;
-
-	/*WMF: cleaning up memory usage */
-
-	/*	if (g_heap_free_head)
-		free(g_heap_free_head);
-	if (g_trace_free_head)
-		free(g_trace_free_head);
-	if (g_linked_f_pointer_free_head)
-		free(g_linked_f_pointer_free_head);*/
-
 	return(success);
 }
 

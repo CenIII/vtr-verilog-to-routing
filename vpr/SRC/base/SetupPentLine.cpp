@@ -15,8 +15,8 @@ void add_one_map_ptr(t_pent_seg_type_info* pent_ptr);
 void map_len_to_pent();
 
 /*straight or pent, subnum, length, x or y, inc or dec. Deep First Traverse. Notice: NoInPat is Bread First*/
-char PentTypeData[PENTYPE][50] = {"-s01xi","-s02xi","-s04xi", "-p11xi-p01yi","-p11xi-p01yd","-p12xi-p01yi","-p12xi-p01yd"};//"-p22xi-p12yi-p02xi-p02xi"};
-float PentTypeFreq[PENTYPE] = {0,100,8,10,10,10,10};//,13,13};
+char PentTypeData[PENTYPE][50] = {"-s01xi","-s02xi", "-p11xi-p01yi","-p11xi-p01yd"};//"-p22xi-p12yi-p02xi-p02xi"};
+float PentTypeFreq[PENTYPE] = {0,100,10,10};//,13,13};
 
 
 void build_one_rod(char* ptr, t_pent_seg_type_info *pent_ptr, int edgenum, int NoInPat, int ind_type){
@@ -62,6 +62,8 @@ void build_one_rod(char* ptr, t_pent_seg_type_info *pent_ptr, int edgenum, int N
 
 void build_pent_type(){
     lp_map = (t_len_to_pent_map *)malloc( (MAXLENGTH+1) * sizeof(t_len_to_pent_map));
+    for(int k=0;k<MAXLENGTH+1;k++)
+        lp_map[k].rodNum=0;
     pent_type = (t_pent_seg_type_info *)malloc( PENTYPE * sizeof(t_pent_seg_type_info));
     t_pent_seg_type_info *pent_ptr = pent_type;
     char* ptr = PentTypeData[0];
@@ -84,8 +86,11 @@ void add_one_map_ptr(t_pent_seg_type_info* pent_ptr){
 }
 void map_len_to_pent(){
     for(int i=0;i<MAXLENGTH+1;i++){
+        lp_map[i].ptype_list=NULL;
         if(lp_map[i].rodNum > 0){
             lp_map[i].ptype_list = (t_pent_seg_type_info**)malloc(lp_map[i].rodNum * sizeof(t_pent_seg_type_info*));
+            for(int k=0;k<lp_map[i].rodNum;k++)
+                lp_map[i].ptype_list[k]=NULL;
         }else
             lp_map[i].ptype_list = NULL;
     }
@@ -120,7 +125,18 @@ void calc_freq(){
     /* calc for each Pat in each chan. In pent_type */
 }
 void SetupPentLine(){
+    pent_type=NULL;
+    lp_map=NULL;
     build_pent_type();
     map_len_to_pent();
     calc_freq();
+}
+
+void SetPentFreq(int index, int freq){
+    PentTypeFreq[index]=freq;
+}
+
+void freePentMem(){
+    free(lp_map);
+    free(pent_type);
 }
