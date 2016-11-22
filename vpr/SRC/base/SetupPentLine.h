@@ -7,8 +7,8 @@
 
 #endif //VTR_SETUPPENTLINE_H_H
 
-#define PENTYPE 4
-#define MAXLENGTH 2
+#define PENTYPE 5
+#define MAXLENGTH 4
 
 void SetupPentLine();
 void SetPentFreq(int index, int freq);

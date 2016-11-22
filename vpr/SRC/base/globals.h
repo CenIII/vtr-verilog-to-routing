@@ -116,6 +116,8 @@ extern struct s_trace **trace_head, **trace_tail;
 /* Structures to define the routing architecture of the FPGA.           */
 extern int num_rr_nodes;
 extern t_rr_node *rr_node; /*  [0..num_rr_nodes-1]          */
+extern int bak_num_rr_nodes;
+extern t_rr_node *bak_rr_node;
 extern int num_rr_indexed_data;
 extern t_rr_indexed_data *rr_indexed_data; /* [0 .. num_rr_indexed_data-1] */
 extern vtr::t_ivec ***rr_node_indices;

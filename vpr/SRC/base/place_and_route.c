@@ -96,9 +96,9 @@ bool place_and_route(struct s_placer_opts placer_opts, char *place_file, char *n
 
 	for(int p=0;p<100;p+=10) {
 
-		SetPentFreq(1,100-p);
-		SetPentFreq(2,p);
+		SetPentFreq(2,100-p);
 		SetPentFreq(3,p);
+		SetPentFreq(4,p);
 		SetupPentLine();
 
 		for(int NoSeg=0;NoSeg<det_routing_arch->num_segment;NoSeg++){

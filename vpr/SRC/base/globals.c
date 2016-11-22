@@ -71,6 +71,11 @@ struct s_trace **trace_tail = NULL; /* [0..(num_nets-1)] */
 
 int num_rr_nodes = 0;
 t_rr_node *rr_node = NULL; /* [0..(num_rr_nodes-1)] */
+
+//num_rr_node和rr_node备份
+int bak_num_rr_nodes=0;
+t_rr_node *bak_rr_node = NULL;
+
 vtr::t_ivec ***rr_node_indices = NULL;
 
 int num_rr_indexed_data = 0;
