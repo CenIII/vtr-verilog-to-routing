@@ -74,21 +74,17 @@
 			<switch_block type="custom"/>
 		</device>
 		<switchlist>
-			<!-- l2s_mux drives length-2 wires on the semi-global metal layer -->
-      <switch type="mux" name="l1s_mux" R="500" Cin="1.5e-15" Cout="0.000000e+00" mux_trans_size="1.5" buf_size="12.2000000">
-        <Tdel num_inputs="6" delay="3.65e-11"/>
-        <Tdel num_inputs="15" delay="4.84e-11"/>
-      </switch>
-      <switch type="mux" name="l2s_mux" R="878" Cin="2e-15" Cout="0.000000e+00" mux_trans_size="1.5" buf_size="14.2000000">
-        <Tdel num_inputs="6" delay="5.65e-11"/>
-        <Tdel num_inputs="15" delay="6.84e-11"/>
-      </switch>
+	<!-- l2s_mux drives length-2 wires on the semi-global metal layer -->
+        <switch type="mux" name="l2s_mux" R="878" Cin="2e-15" Cout="0.000000e+00" mux_trans_size="1.5" buf_size="14.2000000">
+          <Tdel num_inputs="6" delay="5.65e-11"/>
+          <Tdel num_inputs="15" delay="6.84e-11"/>
+        </switch>
       <!-- l4g_mux drives length-4 wires on the global metal layer -->
-      <switch type="mux" name="l4g_mux" R="448" Cin="1.8e-15" Cout="0.000000e+00" mux_trans_size="1.5" buf_size="20.0000000">
-        <Tdel num_inputs="12" delay="5.93e-11"/>
-        <Tdel num_inputs="25" delay="7.35e-11"/>
-      </switch>
-    </switchlist>
+        <switch type="mux" name="l4g_mux" R="448" Cin="1.8e-15" Cout="0.000000e+00" mux_trans_size="1.5" buf_size="20.0000000">
+          <Tdel num_inputs="12" delay="5.93e-11"/>
+          <Tdel num_inputs="25" delay="7.35e-11"/>
+        </switch>
+        </switchlist>
     <segmentlist>
       <segment freq="0.85" name="l1s" length="1" type="unidir" Rmetal="87" Cmetal="0.0">
         <mux name="l2s_mux"/>
@@ -102,7 +98,7 @@
         <cb type="pattern">1 1</cb>
       </segment>
       <!-- 15% length-4 wires on the global metal layer -->
-      <segment freq="0.15" name="l4g" length="4" type="unidir" Rmetal="23" Cmetal="0.0">
+      <segment freq="0.15" name="l4g" length="4" type="unidir" Rmetal="348" Cmetal="0.0">
         <mux name="l2s_mux"/>
         <sb type="pattern">1 1 1 1 1</sb>
         <cb type="pattern">1 1 1 1</cb>

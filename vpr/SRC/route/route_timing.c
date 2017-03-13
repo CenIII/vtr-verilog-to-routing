@@ -223,6 +223,7 @@ bool try_timing_driven_route(struct s_router_opts router_opts,
 		if (success) {
    
 			if (timing_analysis_enabled) {
+                //todo: here comes the timing graph net delays reloading procedure
 				load_timing_graph_net_delays(net_delay);
 				do_timing_analysis(slacks, timing_inf, false, false);
 				float critical_path_delay = get_critical_path_delay();
@@ -235,7 +236,7 @@ bool try_timing_driven_route(struct s_router_opts router_opts,
 			vtr::printf_info("Successfully routed after %d routing iterations.\n", itry);
 #ifdef DEBUG
 			if (timing_analysis_enabled)
-				timing_driven_check_net_delays(net_delay);
+				//timing_driven_check_net_delays(net_delay);
 #endif
 			return (true);
 		}

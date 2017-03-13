@@ -296,19 +296,19 @@ vtr::t_linked_vptr *pattern_link_ptr=NULL;
 
 void count_edges(t_rr_node* L_rr_node, int *count){
     *count += L_rr_node->get_num_edges();
-    for(int i;i<L_rr_node->pent_type->numSubEdges;i++){
-        for(int j;j<L_rr_node->get_num_edges();j++){
-            if(L_rr_node[L_rr_node->edges[j]].pent_type==&L_rr_node->pent_type->SubEdges[i] ){  //TODO: fill the condition
-                /*if(((.direction == from_details.pent_type_ptr->Direction) == (to_details.direction == to_details.pent_type_ptr->Direction)) &&
-                           ((from_chan_type == from_details.pent_type_ptr->XorY) == (to_chan_type == to_details.pent_type_ptr->XorY))) {*/
+    for(int i=0;i<L_rr_node->pent_type->numSubEdges;i++){
+        for(int j=0;j<L_rr_node->get_num_edges();j++){
+            if(rr_node[L_rr_node->edges[j]].pent_type==&L_rr_node->pent_type->SubEdges[i] ){  //TODO: fill the condition
+                if(((rr_node[L_rr_node->edges[j]].get_direction() == rr_node[L_rr_node->edges[j]].pent_type->Direction) == (L_rr_node->get_direction() == L_rr_node->pent_type->Direction)) &&
+                           ((L_rr_node->type == L_rr_node->pent_type->XorY) == ( rr_node[L_rr_node->edges[j]].type== rr_node[L_rr_node->edges[j]].pent_type->XorY))) {
 
                     pattern_link_ptr->next = (vtr::t_linked_vptr *) vtr::malloc(sizeof(vtr::t_linked_vptr));
                     pattern_link_ptr = pattern_link_ptr->next;
-                    pattern_link_ptr->data_vptr = &L_rr_node[L_rr_node->edges[j]];
-                    pattern_link_ptr->next=NULL;
-                    count_edges(&L_rr_node[L_rr_node->edges[j]], count);
+                    pattern_link_ptr->data_vptr = &rr_node[L_rr_node->edges[j]];
+                    pattern_link_ptr->next = NULL;
+                    count_edges(&rr_node[L_rr_node->edges[j]], count);
                     break;
-
+                }
             }
         }
     }
@@ -322,7 +322,7 @@ void collect_edges_and_switches(int* edges, int *switches, float *R, float *C){
             bool flag=false;
             vtr::t_linked_vptr* temp=pattern_link_head;
             while(temp!=NULL){
-                if(&rr_node[((t_rr_node*)(pattern_link_ptr->data_vptr))->edges[i]] == temp->data_vptr)
+                if(&rr_node[((t_rr_node*)(pattern_link_ptr->data_vptr))->edges[i]] == (t_rr_node*)temp->data_vptr)
                     flag=true;
                 temp=temp->next;
             }
@@ -424,7 +424,7 @@ void RR_Node_Compact(){
             rr_node[i].set_num_edges(count-num_rods+1);
 
             //rr_num　－＝　num_rods - 1
-            num_rr_nodes -= num_rods - 1;
+            //num_rr_nodes -= num_rods - 1;
             //free pattern link, 置NULL
 
             free_pattern_link_head();
@@ -485,7 +485,7 @@ bool try_route(int width_fac, struct s_router_opts router_opts,
 
 	vtr::printf_info("Build rr_graph took %g seconds.\n", (float)(end - begin) / CLOCKS_PER_SEC);
 
-    RR_Node_Compact();
+    //RR_Node_Compact();
 
 	bool success = true;
 

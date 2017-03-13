@@ -281,33 +281,33 @@ t_seg_details *alloc_and_load_seg_details(
 
 
 
-    /*专门为４　ｔｏ　４准备,转移短线的直线到长线去*/
-    int sumStraight=0;
-    bool flag=false;
-    for(int kk=0;kk<MAXLENGTH+1;kk+=1){
-        if(lp_map[kk].rodNum>1){
-            int p;
-            for(p=0;p<lp_map[kk].rodNum;p++)
-                if(!lp_map[kk].ptype_list[p]->isPent)
-                    break;
-
-            sumStraight = lp_map[kk].ptype_list[p]->numSets_per_chan;
-            flag = true;
-            lp_map[kk].ptype_list[p]->numSets_per_chan=0;
-            lp_map[kk].seg_sum = lp_map[kk].pent_sum;
-            tp=0;
-            while(segment_inf[tp].length!=kk){tp++;}
-            sets_per_seg_type[tp]=lp_map[kk].seg_sum;
-        }
-        if(flag && lp_map[kk].rodNum==1){
-            lp_map[kk].seg_sum+=sumStraight;
-            lp_map[kk].ptype_list[0]->numSets_per_chan += sumStraight;
-            tp=0;
-            while(segment_inf[tp].length!=kk){tp++;}
-            sets_per_seg_type[tp]=lp_map[kk].seg_sum;
-            break;
-        }
-    }
+    /*专门为４　ｔｏ　４准备,转移短线的直线到长线去*///4to4 prepared
+//    int sumStraight=0;
+//    bool flag=false;
+//    for(int kk=0;kk<MAXLENGTH+1;kk+=1){
+//        if(lp_map[kk].rodNum>1){
+//            int p;
+//            for(p=0;p<lp_map[kk].rodNum;p++)
+//                if(!lp_map[kk].ptype_list[p]->isPent)
+//                    break;
+//
+//            sumStraight = lp_map[kk].ptype_list[p]->numSets_per_chan;
+//            flag = true;
+//            lp_map[kk].ptype_list[p]->numSets_per_chan=0;
+//            lp_map[kk].seg_sum = lp_map[kk].pent_sum;
+//            tp=0;
+//            while(segment_inf[tp].length!=kk){tp++;}
+//            sets_per_seg_type[tp]=lp_map[kk].seg_sum;
+//        }
+//        if(flag && lp_map[kk].rodNum==1){
+//            lp_map[kk].seg_sum+=sumStraight;
+//            lp_map[kk].ptype_list[0]->numSets_per_chan += sumStraight;
+//            tp=0;
+//            while(segment_inf[tp].length!=kk){tp++;}
+//            sets_per_seg_type[tp]=lp_map[kk].seg_sum;
+//            break;
+//        }
+//    }
 
 
 

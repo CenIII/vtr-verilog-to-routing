@@ -94,12 +94,12 @@ bool place_and_route(struct s_placer_opts placer_opts, char *place_file, char *n
 
 	}
 
-	for(int p=0;p<100;p+=10) {
-
-		SetPentFreq(2,100-p);
-		SetPentFreq(3,p);
-		SetPentFreq(4,p);
-		SetupPentLine();
+//	for(int p=0;p<100;p+=10) {
+//
+//		SetPentFreq(2,100-p);
+//		SetPentFreq(3,p);
+//		SetPentFreq(4,p);
+//		SetupPentLine();
 
 		for(int NoSeg=0;NoSeg<det_routing_arch->num_segment;NoSeg++){
 			segment_inf[NoSeg].frequency = (int)(10000* lp_map[segment_inf[NoSeg].length].freq);
@@ -150,6 +150,7 @@ bool place_and_route(struct s_placer_opts placer_opts, char *place_file, char *n
 
 			clb_opins_used_locally = alloc_route_structs();
 
+            //todo: catch it! slacks are being initiated here.
 			t_slack *slacks = alloc_and_load_timing_graph(timing_inf);
 			float **net_delay = alloc_net_delay(&net_delay_ch, g_clbs_nlist.net, g_clbs_nlist.net.size());
 
@@ -162,7 +163,7 @@ bool place_and_route(struct s_placer_opts placer_opts, char *place_file, char *n
 				vtr::printf_info("Circuit is unroutable with a channel width factor of %d.\n", width_fac);
 				sprintf(msg, "Routing failed with a channel width factor of %d. ILLEGAL routing shown.", width_fac);
 			} else {
-				check_route(router_opts.route_type, g_num_rr_switches, clb_opins_used_locally);
+				//check_route(router_opts.route_type, g_num_rr_switches, clb_opins_used_locally);
 				get_serial_num();
 
 				vtr::printf_info("Circuit successfully routed with a channel width factor of %d.\n", width_fac);
@@ -233,7 +234,7 @@ bool place_and_route(struct s_placer_opts placer_opts, char *place_file, char *n
         if (g_linked_f_pointer_free_head)
             free(g_linked_f_pointer_free_head);*/
 
-	}
+	//}
 	return(success);
 }
 
@@ -518,7 +519,7 @@ static int binary_search_place_and_route(struct s_placer_opts placer_opts,
 			router_opts.base_cost_type,
 			router_opts.trim_empty_channels,
 			router_opts.trim_obs_channels,
-			directs, num_directs, false, 
+			directs, num_directs, false,
 			det_routing_arch->dump_rr_structs_file,
 			&det_routing_arch->wire_to_rr_ipin_switch,
 			&g_num_rr_switches,

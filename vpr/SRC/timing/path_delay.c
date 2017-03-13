@@ -1931,6 +1931,7 @@ void do_timing_analysis(t_slack * slacks, const t_timing_inf &timing_inf, bool i
 				/* Update the slack and criticality for each edge of each net which was  
 				analysed on the most recent traversal and has a lower (slack) or 
 				higher (criticality) value than before. */
+                //todo: Catch it! slacks update here.
 				update_slacks(slacks, criticality_denom, 
 					update_slack, is_final_analysis, smallest_slack_in_design, timing_inf);
 

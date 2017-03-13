@@ -17,7 +17,7 @@ struct s_linked_rc_edge {
 	struct s_linked_rc_edge *next;
 };
 
-typedef struct s_linked_rc_edge t_linked_rc_edge;
+typedef struct s_linked_rc_edge  t_linked_rc_edge;
 
 /* Linked list listing the children of an rc_node.                           *
  * child:  Pointer to an rc_node (child of the current node).                *
@@ -382,6 +382,7 @@ static float load_rc_tree_C(t_rc_node * rc_node) {
 		child_node = linked_rc_edge->child;
 		C_downstream = load_rc_tree_C(child_node);
 
+		//todo: here we are. It's the way VPR calc C.
 		if (g_rr_switch_inf[iswitch].buffered == false)
 			C += C_downstream;
 
@@ -389,6 +390,7 @@ static float load_rc_tree_C(t_rc_node * rc_node) {
 	}
 
 	rc_node->C_downstream = C;
+	//这一步实际上就是把路径上每一个ｎｏｄｅ的Ｃ值都计算好了
 	return (C);
 }
 
@@ -432,8 +434,10 @@ static void load_rc_tree_T(t_rc_node * rc_node, float T_arrival) {
 		iswitch = linked_rc_edge->iswitch;
 		child_node = linked_rc_edge->child;
 
+
 		Tchild = Tdel + g_rr_switch_inf[iswitch].R * child_node->C_downstream;
 		Tchild += g_rr_switch_inf[iswitch].Tdel; /* Intrinsic switch delay. */
+		//todo: here we hit the core calc procedure of delay. But what delay does it calc?
 		load_rc_tree_T(child_node, Tchild);
 
 		linked_rc_edge = linked_rc_edge->next;
