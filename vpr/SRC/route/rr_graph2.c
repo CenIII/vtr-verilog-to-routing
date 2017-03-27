@@ -42,13 +42,13 @@ static int get_unidir_track_to_chan_seg(
 		const int from_track, const int to_chan, const int to_seg, const int to_sb,
 		const t_rr_type to_type, const int max_chan_width, const int L_nx,
 		const int L_ny, const enum e_side from_side, const enum e_side to_side,
-		const int Fs_per_side,
+		const int Fs_per_side, const int start_p,
 		short ******sblock_pattern, vtr::t_ivec *** L_rr_node_indices,
 		const t_seg_details * seg_details, bool * L_rr_edge_done,
 		bool * Fs_clipped, struct s_linked_edge **edge_list);
 
 static int get_track_to_chan_seg(
-		const int from_track, const int to_chan, const int to_seg,
+		const int from_track, const int to_chan, const int to_seg,const int start_p, const float R_pct,
 		const t_rr_type to_chan_type,
 		const e_side from_side, const e_side to_side,
 		vtr::t_ivec ***L_rr_node_indices, 
@@ -887,7 +887,7 @@ int get_bidir_opin_connections(
 				to_switch = seg_details[to_track].arch_wire_switch;
 				to_node = get_rr_node_index(tr_i, tr_j, to_type, to_track, L_rr_node_indices);
 
-				*edge_list = insert_in_edge_list(*edge_list, to_node, to_switch);
+				*edge_list = insert_in_edge_list(*edge_list, to_node,0,0, to_switch); //todo:不用管　bid
 				L_rr_edge_done[to_node] = true;
 				++num_conn;
 			}
@@ -961,13 +961,13 @@ int get_unidir_opin_connections(
 		/* Add to the list. */
 		if (false == L_rr_edge_done[inc_inode_index]) {
 			L_rr_edge_done[inc_inode_index] = true;
-			*edge_list_ptr = insert_in_edge_list(*edge_list_ptr, inc_inode_index,
+			*edge_list_ptr = insert_in_edge_list(*edge_list_ptr, inc_inode_index, 0, 0,//todo:这是ｏｐｉｎ到ｔｒａｃｋ的，所以不用管
 					seg_details[inc_track].arch_opin_switch);
 			++num_edges;
 		}
 		if (false == L_rr_edge_done[dec_inode_index]) {
 			L_rr_edge_done[dec_inode_index] = true;
-			*edge_list_ptr = insert_in_edge_list(*edge_list_ptr, dec_inode_index,
+			*edge_list_ptr = insert_in_edge_list(*edge_list_ptr, dec_inode_index, 0, 0,//todo:这是ｏｐｉｎ到ｔｒａｃｋ的，所以不用管
 					seg_details[dec_track].arch_opin_switch);
 			++num_edges;
 		}
@@ -1594,6 +1594,9 @@ int get_track_to_pins(
 	int j, pass, iconn, phy_track, end, to_node, max_conn, ipin, side, x, y, num_conn;
 	t_type_ptr type;
 
+    int start_p, temp;
+    float R_pct;
+
 	/* End of this wire */
 	end = get_seg_end(seg_details, track, seg, chan, chan_length);
 
@@ -1602,6 +1605,20 @@ int get_track_to_pins(
 
 	for (j = seg; j <= end; j++) {
 		if (is_cblock(chan, j, track, seg_details)) {
+
+            if(seg_details[track].direction == INC_DIRECTION){
+                start_p=j-seg+1;
+                R_pct = (float)start_p/seg_details[track].length;
+                if((temp = seg_details[track].seg_start - seg_details[track].start) < 0)
+                    start_p+=temp+seg_details[track].length;
+            } else{
+                start_p=end-j+1;
+                R_pct = (float)start_p/seg_details[track].length;
+                if(seg_details[track].seg_start == seg_details[track].start
+                   && (temp = seg_details[track].seg_start +seg_details[track].length -1 - seg_details[track].seg_end) > 0)
+                    start_p+=temp;
+            }
+
 			for (pass = 0; pass < 2; ++pass) {
 				if (CHANX == chan_type) {
 					x = j;
@@ -1636,7 +1653,7 @@ int get_track_to_pins(
 
 					/* Check there is a connection and Fc map isn't wrong */
 					to_node = get_rr_node_index(x, y, IPIN, ipin, L_rr_node_indices);
-					edge_list_head = insert_in_edge_list(edge_list_head, to_node, wire_to_ipin_switch);
+					edge_list_head = insert_in_edge_list(edge_list_head, to_node,start_p,R_pct, wire_to_ipin_switch); //todo:track到ipin，要改值
 					++num_conn;
 				}
 			}
@@ -1686,7 +1703,10 @@ int get_track_to_tracks(
 	bool from_is_sblock, is_behind, Fs_clipped;
 	enum e_side from_side_a, from_side_b, to_side;
 	bool custom_switch_block;
-
+    int start_p;
+    int temp;
+    float R_pct;
+	t_seg_details from_track_detail = from_seg_details[from_track];
 	/* check whether a custom switch block will be used */
 	custom_switch_block = false;
 	if (sb_conn_map){
@@ -1796,7 +1816,14 @@ int get_track_to_tracks(
 			if (custom_switch_block){
 				if (DEC_DIRECTION == from_seg_details[from_track].direction || 
 				    BI_DIRECTIONAL == directionality){
-					num_conn += get_track_to_chan_seg(from_track, to_chan, to_seg,
+                    //todo:这里计算出ｅｄｇｅ的ｓｔａｒｔ_ｐ
+                    start_p=end_sb_seg-sb_seg;
+                    R_pct = (float)start_p/from_track_detail.length;
+                    if(from_track_detail.seg_start == from_track_detail.start
+                       && (temp = from_track_detail.seg_start +from_track_detail.length -1 - from_track_detail.seg_end) > 0)
+                        start_p+=temp;
+
+					num_conn += get_track_to_chan_seg(from_track, to_chan, to_seg, start_p, R_pct, //todo:传值待修改　对
 									to_type, from_side_a, to_side, L_rr_node_indices, 
 									sb_conn_map, L_rr_edge_done, edge_list);
 				}
@@ -1819,7 +1846,7 @@ int get_track_to_tracks(
 						num_conn += get_unidir_track_to_chan_seg(
 								from_track, to_chan,
 								to_seg, to_sb, to_type, max_chan_width, nx, ny,
-								from_side_a, to_side, Fs_per_side,
+								from_side_a, to_side, Fs_per_side, sb_seg-start,
 								sblock_pattern, L_rr_node_indices, to_seg_details,
 								L_rr_edge_done, &Fs_clipped, edge_list);
 					}
@@ -1833,7 +1860,11 @@ int get_track_to_tracks(
 			if (custom_switch_block){
 				if (INC_DIRECTION == from_seg_details[from_track].direction || 
 				    BI_DIRECTIONAL == directionality){
-					num_conn += get_track_to_chan_seg(from_track, to_chan, to_seg,
+                    start_p=sb_seg-start_sb_seg;
+                    R_pct = (float)start_p/from_track_detail.length;
+                    if((temp = from_track_detail.seg_start - from_track_detail.start) < 0)
+                        start_p+=temp+from_track_detail.length;
+					num_conn += get_track_to_chan_seg(from_track, to_chan, to_seg, start_p, R_pct, //todo:传值待修改
 									to_type, from_side_b, to_side, L_rr_node_indices, 
 									sb_conn_map, L_rr_edge_done, edge_list);
 				}
@@ -1856,7 +1887,7 @@ int get_track_to_tracks(
 						num_conn += get_unidir_track_to_chan_seg(
 								from_track, to_chan,
 								to_seg, to_sb, to_type, max_chan_width, nx, ny, 
-								from_side_b, to_side, Fs_per_side, 
+								from_side_b, to_side, Fs_per_side, sb_seg-start,
 								sblock_pattern, L_rr_node_indices, to_seg_details, 
 								L_rr_edge_done, &Fs_clipped, edge_list);
 					}
@@ -1918,7 +1949,7 @@ static int get_bidir_track_to_chan_seg(
 			}
 
 			/* Add the edge to the list */
-			*edge_list = insert_in_edge_list(*edge_list, to_node,
+			*edge_list = insert_in_edge_list(*edge_list, to_node,0,0, //todo:不用管，bid
 					switch_types[i]);
 			/* Mark the edge as now done */
 			L_rr_edge_done[to_node] = true;
@@ -1935,7 +1966,7 @@ static int get_bidir_track_to_chan_seg(
    See route/build_switchblocks.c for a detailed description of how the switch block
    connection map sb_conn_map is generated. */
 static int get_track_to_chan_seg(
-		const int from_wire, const int to_chan, const int to_seg,
+		const int from_wire, const int to_chan, const int to_seg, const int start_p, const float R_pct,
 		const t_rr_type to_chan_type,
 		const e_side from_side, const e_side to_side,
 		vtr::t_ivec ***L_rr_node_indices, 
@@ -1985,7 +2016,7 @@ static int get_track_to_chan_seg(
 				continue;
 			}
 
-			*edge_list = insert_in_edge_list(*edge_list, to_node, src_switch);
+			*edge_list = insert_in_edge_list(*edge_list, to_node,start_p,R_pct, src_switch); //todo:这里的start_p等待计算
 			L_rr_edge_done[to_node] = true;
 			++edge_count;
 		}
@@ -2000,7 +2031,7 @@ static int get_unidir_track_to_chan_seg(
 		const int from_track, const int to_chan, const int to_seg, const int to_sb,
 		const t_rr_type to_type, const int max_chan_width, const int L_nx,
 		const int L_ny, const enum e_side from_side, const enum e_side to_side,
-		const int Fs_per_side,
+		const int Fs_per_side, const int start_p,
 		short ******sblock_pattern, vtr::t_ivec *** L_rr_node_indices,
 		const t_seg_details * seg_details, bool * L_rr_edge_done,
 		bool * Fs_clipped, struct s_linked_edge **edge_list) {
@@ -2065,7 +2096,7 @@ static int get_unidir_track_to_chan_seg(
 
 			/* Add edge to list. */
 			L_rr_edge_done[to_node] = true;
-			*edge_list = insert_in_edge_list(*edge_list, to_node, seg_details[to_track].arch_wire_switch);
+			*edge_list = insert_in_edge_list(*edge_list, to_node, start_p,0, seg_details[to_track].arch_wire_switch);
 			++count;
 		}
 	}

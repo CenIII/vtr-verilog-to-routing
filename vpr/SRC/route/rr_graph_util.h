@@ -1,11 +1,13 @@
 struct s_linked_edge {
 	int edge;
+	int start_p;
+	float R_pct;
 	short iswitch;
 	struct s_linked_edge *next;
 };
 typedef struct s_linked_edge t_linked_edge;
 
-t_linked_edge *insert_in_edge_list(t_linked_edge * head, int edge,
+t_linked_edge *insert_in_edge_list(t_linked_edge * head, int edge, int start_p, float R_pct,
 		short iswitch);
 
 void free_linked_edge_soft(t_linked_edge * edge_ptr,

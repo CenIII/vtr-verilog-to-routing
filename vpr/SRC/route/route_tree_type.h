@@ -5,6 +5,7 @@
 struct s_linked_rt_edge {
 	struct s_rt_node *child;
 	short iswitch;
+	int iedge;
 	struct s_linked_rt_edge *next;
 };
 

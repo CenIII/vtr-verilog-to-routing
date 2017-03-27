@@ -14,6 +14,8 @@ using namespace std;
 struct s_linked_rc_edge {
 	struct s_rc_node *child;
 	short iswitch;
+	int start_p;
+	float R_pct;
 	struct s_linked_rc_edge *next;
 };
 
@@ -68,7 +70,7 @@ static t_rc_node *alloc_and_load_rc_tree(int inet,
 		t_linked_rc_ptr * rr_node_to_rc_node);
 
 static void add_to_rc_tree(t_rc_node * parent_rc, t_rc_node * child_rc,
-		short iswitch, int inode, t_linked_rc_edge ** rc_edge_free_list_ptr);
+		short iswitch, int start_p, float R_pct, int inode, t_linked_rc_edge ** rc_edge_free_list_ptr);
 
 static t_rc_node *alloc_rc_node(t_rc_node ** rc_node_free_list_ptr);
 
@@ -208,6 +210,8 @@ alloc_and_load_rc_tree(int inet, t_rc_node ** rc_node_free_list_ptr,
 	struct s_trace *tptr;
 	int inode, prev_node;
 	short iswitch;
+	int start_p;
+	float R_pct;
 	t_linked_rc_ptr *linked_rc_ptr;
 
 	root_rc = alloc_rc_node(rc_node_free_list_ptr);
@@ -217,9 +221,11 @@ alloc_and_load_rc_tree(int inet, t_rc_node ** rc_node_free_list_ptr,
 		vpr_throw(VPR_ERROR_TIMING,__FILE__, __LINE__, 
 				"in alloc_and_load_rc_tree: Traceback for net %d does not exist.\n", inet);
 	}
-
+	//todo:trace给iswitch R_pct start_p赋值
 	inode = tptr->index;
 	iswitch = tptr->iswitch;
+	start_p = rr_node[tptr->index].start_p[tptr->iedge];
+	R_pct = rr_node[tptr->index].R_pct[tptr->iedge];
 	root_rc->inode = inode;
 	root_rc->u.child_list = NULL;
 	rr_node_to_rc_node[inode].rc_node = root_rc;
@@ -235,7 +241,7 @@ alloc_and_load_rc_tree(int inet, t_rc_node ** rc_node_free_list_ptr,
 
 		if (rr_node_to_rc_node[inode].rc_node == NULL) { /* Part of current "arm" */
 			curr_rc = alloc_rc_node(rc_node_free_list_ptr);
-			add_to_rc_tree(prev_rc, curr_rc, iswitch, inode,
+			add_to_rc_tree(prev_rc, curr_rc, iswitch, start_p, R_pct, inode,
 					rc_edge_free_list_ptr);
 			rr_node_to_rc_node[inode].rc_node = curr_rc;
 			prev_rc = curr_rc;
@@ -265,7 +271,7 @@ alloc_and_load_rc_tree(int inet, t_rc_node ** rc_node_free_list_ptr,
 			 * associated with the rr_node (inode) associated with that SINK.           */
 
 			curr_rc = alloc_rc_node(rc_node_free_list_ptr);
-			add_to_rc_tree(prev_rc, curr_rc, iswitch, inode,
+			add_to_rc_tree(prev_rc, curr_rc, iswitch, start_p, R_pct, inode,
 					rc_edge_free_list_ptr);
 
 			linked_rc_ptr = (t_linked_rc_ptr *) vtr::malloc(
@@ -284,7 +290,7 @@ alloc_and_load_rc_tree(int inet, t_rc_node ** rc_node_free_list_ptr,
 }
 
 static void add_to_rc_tree(t_rc_node * parent_rc, t_rc_node * child_rc,
-		short iswitch, int inode, t_linked_rc_edge ** rc_edge_free_list_ptr) {
+		short iswitch, int start_p, float R_pct, int inode, t_linked_rc_edge ** rc_edge_free_list_ptr) {
 
 	/* Adds child_rc to the child list of parent_rc, and sets the switch between *
 	 * them to iswitch.  This routine also intitializes the child_rc properly    *
@@ -299,6 +305,8 @@ static void add_to_rc_tree(t_rc_node * parent_rc, t_rc_node * child_rc,
 
 	linked_rc_edge->child = child_rc;
 	linked_rc_edge->iswitch = iswitch;
+	linked_rc_edge->start_p = start_p;
+	linked_rc_edge->R_pct = R_pct;
 
 	child_rc->u.child_list = NULL;
 	child_rc->inode = inode;
@@ -401,11 +409,12 @@ static void load_rc_tree_T(t_rc_node * rc_node, float T_arrival) {
 	 * at which the signal hits the input to this node.  This routine calls     *
 	 * itself recursively to perform the traversal.                             */
 
-	float Tdel, Rmetal, Tchild;
+	float Tdel, Rmetal, Tchild, R_pct;
 	t_linked_rc_edge *linked_rc_edge;
 	t_rc_node *child_node;
 	short iswitch;
 	int inode;
+	float T_extr;
 
 	Tdel = T_arrival;
 	inode = rc_node->inode;
@@ -423,7 +432,8 @@ static void load_rc_tree_T(t_rc_node * rc_node, float T_arrival) {
 	 * capacitance by Rmetal.  Play with this equation if you like.             */
 
 	/* Rmetal is distributed so x0.5 */
-	Tdel += 0.5 * rc_node->C_downstream * Rmetal;
+	T_extr = 0.5 * rc_node->C_downstream * Rmetal;
+	Tdel += T_extr;
 	rc_node->Tdel = Tdel;
 
 	/* Now expand the children of this node to load their Tdel values.       */
@@ -433,9 +443,11 @@ static void load_rc_tree_T(t_rc_node * rc_node, float T_arrival) {
 	while (linked_rc_edge != NULL) { /* For all children */
 		iswitch = linked_rc_edge->iswitch;
 		child_node = linked_rc_edge->child;
-
-
-		Tchild = Tdel + g_rr_switch_inf[iswitch].R * child_node->C_downstream;
+		R_pct = 1;
+		if(rr_node[inode].type == CHANX || rr_node[inode].type == CHANY){
+			R_pct = linked_rc_edge->R_pct;
+		}
+		Tchild = Tdel+T_extr*R_pct + g_rr_switch_inf[iswitch].R * child_node->C_downstream;
 		Tchild += g_rr_switch_inf[iswitch].Tdel; /* Intrinsic switch delay. */
 		//todo: here we hit the core calc procedure of delay. But what delay does it calc?
 		load_rc_tree_T(child_node, Tchild);

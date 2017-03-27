@@ -282,6 +282,7 @@ add_path_to_route_tree(struct s_heap *hptr, t_rt_node ** sink_rt_node_ptr) {
 		linked_rt_edge = alloc_linked_rt_edge();
 		linked_rt_edge->child = downstream_rt_node;
 		linked_rt_edge->iswitch = iswitch;
+		linked_rt_edge->iedge = iedge;
 		linked_rt_edge->next = NULL;
 
 		rt_node = alloc_rt_node();
@@ -317,6 +318,7 @@ add_path_to_route_tree(struct s_heap *hptr, t_rt_node ** sink_rt_node_ptr) {
 	linked_rt_edge = alloc_linked_rt_edge();
 	linked_rt_edge->child = downstream_rt_node;
 	linked_rt_edge->iswitch = iswitch;
+	linked_rt_edge->iedge = iedge;
 	linked_rt_edge->next = rt_node->u.child_list;
 	rt_node->u.child_list = linked_rt_edge;
 
@@ -413,19 +415,19 @@ void load_route_tree_Tdel(t_rt_node * subtree_rt_root, float Tarrival) {
 	 * must be correct before this routine is called.  Tarrival is the time at
 	 * at which the signal arrives at this node's *input*.                      */
 
-	int inode;
+	int inode,iedge;
 	short iswitch;
 	t_rt_node *child_node;
 	t_linked_rt_edge *linked_rt_edge;
-	float Tdel, Tchild;
-
+	float Tdel, Tchild, R_pct;
+	float T_extr;
 	inode = subtree_rt_root->inode;
 
 	/* Assuming the downstream connections are, on average, connected halfway
 	 * along a wire segment's length.  See discussion in net_delay.c if you want
 	 * to change this.                                                           */
-
-	Tdel = Tarrival + 0.5 * subtree_rt_root->C_downstream * rr_node[inode].R;
+	T_extr = 0.5 * subtree_rt_root->C_downstream * rr_node[inode].R;
+	Tdel = Tarrival + T_extr;
 	subtree_rt_root->Tdel = Tdel;
 
 	/* Now expand the children of this node to load their Tdel values (depth-
@@ -436,8 +438,12 @@ void load_route_tree_Tdel(t_rt_node * subtree_rt_root, float Tarrival) {
 	while (linked_rt_edge != NULL) {
 		iswitch = linked_rt_edge->iswitch;
 		child_node = linked_rt_edge->child;
-
-		Tchild = Tdel + g_rr_switch_inf[iswitch].R * child_node->C_downstream;
+		iedge = linked_rt_edge->iedge;
+		R_pct = 1;
+		if(rr_node[inode].type == CHANX || rr_node[inode].type == CHANY){
+			R_pct = rr_node[inode].R_pct[iedge];
+		}
+		Tchild = Tarrival + T_extr*R_pct + g_rr_switch_inf[iswitch].R * child_node->C_downstream;
 		Tchild += g_rr_switch_inf[iswitch].Tdel; /* Intrinsic switch delay. */
 		load_route_tree_Tdel(child_node, Tchild);
 
@@ -569,6 +575,9 @@ t_rt_node* traceback_to_route_tree(int inet) {
 	// prev edge is always a dangling edge, waiting to point to next child, always belongs to parent_node
 	t_linked_rt_edge* prev_edge {alloc_linked_rt_edge()};	
 	prev_edge->iswitch = head->iswitch;
+	prev_edge->iedge = head->iedge;
+//	prev_edge->start_p = rr_node[head->index].start_p[head->iedge];
+//	prev_edge->R_pct = rr_node[head->index].R_pct[head->iedge];
 	prev_edge->next = nullptr;
 	rt_root->u.child_list = prev_edge;
 
@@ -599,6 +608,9 @@ t_rt_node* traceback_to_route_tree(int inet) {
 			// create new dangling edge belonging to the current node for its child (there exists one since new_node isn't tail (sink))
 			prev_edge = alloc_linked_rt_edge();
 			prev_edge->iswitch = new_node->iswitch;
+			prev_edge->iedge = new_node->iedge;
+//			prev_edge->start_p = rr_node[new_node->index].start_p[new_node->iedge];
+//			prev_edge->R_pct = rr_node[new_node->index].R_pct[new_node->iedge];
 			prev_edge->next = nullptr;
 			rt_node->u.child_list = prev_edge;
 			// hold onto rt_node since we will need it when it becomes the branch point for another branch
@@ -631,6 +643,9 @@ t_rt_node* traceback_to_route_tree(int inet) {
 		parent_node = rr_node_to_rt_node[head->index];
 		prev_edge = alloc_linked_rt_edge();
 		prev_edge->iswitch = head->iswitch;
+		prev_edge->iedge = head->iedge;
+//		prev_edge->start_p = rr_node[head->index].start_p[head->iedge];
+//		prev_edge->R_pct = rr_node[head->index].R_pct[head->iedge];
 		// advance to trunk node's next edge
 		prev_edge->next = parent_node->u.child_list;
 		parent_node->u.child_list = prev_edge;
@@ -653,6 +668,7 @@ static t_trace* traceback_branch_from_route_tree(t_trace* head, const t_rt_node*
 		// reached a sink
 		if (!edge) {
 			head->iswitch = OPEN;
+			head->iedge = OPEN;
 			// inform caller that a sink was reached from there
 			--sinks_left;
 			// the caller will set the sink's next
@@ -664,6 +680,7 @@ static t_trace* traceback_branch_from_route_tree(t_trace* head, const t_rt_node*
 			t_trace* sink;
 			do {
 				head->iswitch = edge->iswitch;
+				head->iedge = edge->iedge;
 				// a sub-branch off the current one, such that branch_head's parent is head
 				t_trace* branch_head = alloc_trace_data();
 				branch_head->index = edge->child->inode;
@@ -686,6 +703,7 @@ static t_trace* traceback_branch_from_route_tree(t_trace* head, const t_rt_node*
 		// only 1 edge (and must be valid)
 
 		head->iswitch = edge->iswitch;
+		head->iedge = edge->iswitch;
 		root = edge->child;
 		edge = root->u.child_list;
 

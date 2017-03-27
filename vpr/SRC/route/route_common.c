@@ -704,6 +704,7 @@ update_traceback(struct s_heap *hptr, int inet) {
 	tptr = alloc_trace_data(); /* SINK on the end of the connection */
 	tptr->index = inode;
 	tptr->iswitch = OPEN;
+	tptr->iedge = OPEN;
 	tptr->next = NULL;
 	temptail = tptr; /* This will become the new tail at the end */
 	/* of the routine.                          */
@@ -717,6 +718,7 @@ update_traceback(struct s_heap *hptr, int inet) {
 		prevptr = alloc_trace_data();
 		prevptr->index = inode;
 		prevptr->iswitch = rr_node[inode].switches[iedge];
+		prevptr->iedge = iedge;
 		prevptr->next = tptr;
 		tptr = prevptr;
 

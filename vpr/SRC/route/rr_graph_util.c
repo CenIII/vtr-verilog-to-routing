@@ -5,7 +5,7 @@
 #include "rr_graph_util.h"
 
 t_linked_edge *
-insert_in_edge_list(t_linked_edge * head, const int edge, const short iswitch) {
+insert_in_edge_list(t_linked_edge * head, const int edge, const int start_p, const float R_pct, const short iswitch) {
 
 	/* Inserts a new element at the head of a linked list.  Returns the new head *
 	 * of the list.  One argument is the address of the head of a list of free   *
@@ -17,6 +17,8 @@ insert_in_edge_list(t_linked_edge * head, const int edge, const short iswitch) {
 	linked_edge = (t_linked_edge *) vtr::malloc(sizeof(t_linked_edge));
 
 	linked_edge->edge = edge;
+	linked_edge->start_p = start_p;
+	linked_edge->R_pct = R_pct;
 	linked_edge->iswitch = iswitch;
 	linked_edge->next = head;
 

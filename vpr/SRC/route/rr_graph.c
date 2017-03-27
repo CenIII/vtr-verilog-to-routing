@@ -1631,13 +1631,16 @@ void alloc_and_load_edges_and_switches(t_rr_node * L_rr_node, const int inode,
 	L_rr_node[inode].set_num_edges(num_edges);
 	L_rr_node[inode].edges = (int *) vtr::malloc(num_edges * sizeof(int));
 	L_rr_node[inode].switches = (short *) vtr::malloc(num_edges * sizeof(short));
+	L_rr_node[inode].start_p = (int *)vtr::malloc(num_edges * sizeof(int));
+	L_rr_node[inode].R_pct = (float *)vtr::malloc(num_edges * sizeof(float));
 
 	i = 0;
 	list_ptr = edge_list_head;
 	while (list_ptr && (i < num_edges)) {
 		L_rr_node[inode].edges[i] = list_ptr->edge;
 		L_rr_node[inode].switches[i] = list_ptr->iswitch;
-
+		L_rr_node[inode].start_p[i] = list_ptr->start_p;
+		L_rr_node[inode].R_pct[i] = list_ptr->R_pct;
 		L_rr_node[list_ptr->edge].set_fan_in(L_rr_node[list_ptr->edge].get_fan_in() + 1);
 
 		/* Unmark the edge since we are done considering fanout from node. */
@@ -2641,7 +2644,7 @@ static int get_opin_direct_connecions(int x, int y, int opin,
                         height_offset = grid[x + directs[i].x_offset][y + directs[i].y_offset].height_offset;
                         inode = get_rr_node_index(x + directs[i].x_offset - width_offset, y + directs[i].y_offset - height_offset, 
                                 IPIN, ipin, L_rr_node_indices);
-                        edge_list_head = insert_in_edge_list(edge_list_head, inode, clb_to_clb_directs[i].switch_index);
+                        edge_list_head = insert_in_edge_list(edge_list_head, inode,0, 0, clb_to_clb_directs[i].switch_index); //todo: 不用管　ｄｉｒｅｃｔ
                         new_edges++;
                     }
                 }

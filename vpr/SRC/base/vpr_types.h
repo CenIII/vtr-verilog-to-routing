@@ -969,6 +969,7 @@ struct s_linked_f_pointer {
 typedef struct s_trace {
 	struct s_trace *next;
 	int index;
+	int iedge;
 	int iblock;
 	int num_siblings;
 	short iswitch;

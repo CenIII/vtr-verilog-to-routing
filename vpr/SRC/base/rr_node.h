@@ -72,7 +72,8 @@ public:
 	t_rr_type type;
 	int *edges;
 	short *switches;
-
+	int *start_p;
+	float *R_pct;
 	t_pent_seg_type_info* pent_type;
 
 	float R;
