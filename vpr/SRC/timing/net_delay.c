@@ -210,8 +210,8 @@ alloc_and_load_rc_tree(int inet, t_rc_node ** rc_node_free_list_ptr,
 	struct s_trace *tptr;
 	int inode, prev_node;
 	short iswitch;
-	int start_p;
-	float R_pct;
+	int start_p=0;
+	float R_pct=0;
 	t_linked_rc_ptr *linked_rc_ptr;
 
 	root_rc = alloc_rc_node(rc_node_free_list_ptr);
@@ -224,8 +224,10 @@ alloc_and_load_rc_tree(int inet, t_rc_node ** rc_node_free_list_ptr,
 	//todo:trace给iswitch R_pct start_p赋值
 	inode = tptr->index;
 	iswitch = tptr->iswitch;
-	start_p = rr_node[tptr->index].start_p[tptr->iedge];
-	R_pct = rr_node[tptr->index].R_pct[tptr->iedge];
+	if(rr_node[tptr->index].type == CHANY || rr_node[tptr->index].type == CHANX) {
+		start_p = rr_node[tptr->index].start_p[tptr->iedge];
+		R_pct = rr_node[tptr->index].R_pct[tptr->iedge];
+	}
 	root_rc->inode = inode;
 	root_rc->u.child_list = NULL;
 	rr_node_to_rc_node[inode].rc_node = root_rc;
@@ -282,7 +284,16 @@ alloc_and_load_rc_tree(int inet, t_rc_node ** rc_node_free_list_ptr,
 
 			prev_rc = curr_rc;
 		}
+		//todo: vnimabia
+
 		iswitch = tptr->iswitch;
+		if(rr_node[tptr->index].type == CHANY || rr_node[tptr->index].type == CHANX) {
+			start_p = rr_node[tptr->index].start_p[tptr->iedge];
+			R_pct = rr_node[tptr->index].R_pct[tptr->iedge];
+		} else{
+			start_p = 0;
+			R_pct = 0;
+		}
 		tptr = tptr->next;
 	}
 
@@ -433,8 +444,8 @@ static void load_rc_tree_T(t_rc_node * rc_node, float T_arrival) {
 
 	/* Rmetal is distributed so x0.5 */
 	T_extr = 0.5 * rc_node->C_downstream * Rmetal;
-	Tdel += T_extr;
-	rc_node->Tdel = Tdel;
+	//Tdel += T_extr;
+	rc_node->Tdel = Tdel+T_extr;
 
 	/* Now expand the children of this node to load their Tdel values.       */
 
