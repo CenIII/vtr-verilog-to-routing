@@ -56,10 +56,10 @@ void read_place(const char *place_file, const char *arch_file,
 				"'%s' - Bad filename specification line in placement file.\n", 
 				place_file);
 	}
-	if (tokens[2] != arch_file) {
-		vpr_throw(VPR_ERROR_PLACE_F, __FILE__, __LINE__, 
-				"'%s' - Architecture file that generated placement (%s) does not match current architecture file (%s).\n", 
-				place_file, tokens[2].c_str(), arch_file);
+	if (tokens[2] != arch_file) { //todo: 注释掉了
+//		vpr_throw(VPR_ERROR_PLACE_F, __FILE__, __LINE__,
+//				"'%s' - Architecture file that generated placement (%s) does not match current architecture file (%s).\n",
+//				place_file, tokens[2].c_str(), arch_file);
 	}
 	if (tokens[5] != net_file) {
 		vpr_throw(VPR_ERROR_PLACE_F, __FILE__, __LINE__, 

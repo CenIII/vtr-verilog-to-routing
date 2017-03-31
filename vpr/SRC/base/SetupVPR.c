@@ -115,6 +115,42 @@ void SetupVPR(t_options *Options, const bool TimingEnabled,
 		}
 	}
 
+
+//        if (Options->NetFile == NULL ) {
+//            len = 2*strlen(Options->CircuitName) + 11; /* circuit_name.net/0*/
+////		if (Options->out_file_prefix != NULL ) {
+////			len += strlen(Options->out_file_prefix);
+////		}
+//        char* str_path = "/home/ivan/Documents/vtr-8.0-Clion/vtr_flow/tasks/2D_segment/p_n_files/";
+//        len += strlen(str_path);
+//        Options->NetFile = (char*) vtr::calloc(len, sizeof(char));
+//        if (Options->out_file_prefix == NULL ) {
+//            sprintf(Options->NetFile, "%s%s.blif/%s.net", str_path, Options->CircuitName,
+//                    Options->CircuitName);//sprintf(Options->NetFile, "%s.net", Options->CircuitName);
+//        } else {
+//            sprintf(Options->NetFile, "%s%s.blif/%s.net", str_path, Options->CircuitName,
+//                    Options->CircuitName);
+//        }
+//    }
+//
+//    if (Options->PlaceFile == NULL ) {
+//        len = 2*strlen(Options->CircuitName) + 13; /* circuit_name.place/0*/
+////		if (Options->out_file_prefix != NULL ) {
+////			len += strlen(Options->out_file_prefix);
+////		}
+//        char* str_path = "/home/ivan/Documents/vtr-8.0-Clion/vtr_flow/tasks/2D_segment/p_n_files/";
+//        len += strlen(str_path);
+//        Options->PlaceFile = (char*) vtr::calloc(len, sizeof(char));
+//        if (Options->out_file_prefix == NULL ) {
+//            sprintf(Options->PlaceFile, "%s%s.blif/%s.place", str_path,Options->CircuitName,
+//                    Options->CircuitName);//sprintf(Options->PlaceFile, "%s.place", Options->CircuitName);
+//        } else {
+//            sprintf(Options->PlaceFile, "%s%s.blif/%s.place", str_path,Options->CircuitName,
+//                    Options->CircuitName);
+//        }
+//
+//	}
+
 	if (Options->RouteFile == NULL ) {
 		len = strlen(Options->CircuitName) + 7; /* circuit_name.route/0*/
 		if (Options->out_file_prefix != NULL ) {
