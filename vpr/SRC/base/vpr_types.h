@@ -878,6 +878,10 @@ struct s_pent_seg_type_info {
 	float PatFreq;
     float freq_in_chan;
     int numSets_per_chan;
+
+	int occ;
+	int cap;
+	int *start_p_array;
 };
 
 /* Map from length to a specific rod. */

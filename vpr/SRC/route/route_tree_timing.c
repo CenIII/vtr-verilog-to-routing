@@ -703,7 +703,7 @@ static t_trace* traceback_branch_from_route_tree(t_trace* head, const t_rt_node*
 		// only 1 edge (and must be valid)
 
 		head->iswitch = edge->iswitch;
-		head->iedge = edge->iswitch;
+		head->iedge = edge->iedge;
 		root = edge->child;
 		edge = root->u.child_list;
 

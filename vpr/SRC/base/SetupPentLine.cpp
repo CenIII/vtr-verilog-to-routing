@@ -15,8 +15,8 @@ void add_one_map_ptr(t_pent_seg_type_info* pent_ptr);
 void map_len_to_pent();
 
 /*straight or pent, subnum, length, x or y, inc or dec. Deep First Traverse. Notice: NoInPat is Bread First*/
-char PentTypeData[PENTYPE][50] = {"-s01xi","-s02xi","-s04xi", "-p12xi-p02yi","-p12xi-p02yd","-p22xi-p02xi-p02yi","-p22xi-p02xi-p02yd"};
-float PentTypeFreq[PENTYPE] = {0,0,80,0,0,0,0};
+char PentTypeData[PENTYPE][50] = {"-s01xi","-s02xi","-s04xi", "-p12xi-p02yi","-p12xi-p02yd","-p22xi-p02xi-p02yi","-p22xi-p02xi-p02yd","-p12xi-p12yi-p02xi","-p12xi-p12yd-p02xi"};
+float PentTypeFreq[PENTYPE] = {0,0,72,18,18,0,0,35,35};
 
 
 void build_one_rod(char* ptr, t_pent_seg_type_info *pent_ptr, int edgenum, int NoInPat, int ind_type){
@@ -50,6 +50,9 @@ void build_one_rod(char* ptr, t_pent_seg_type_info *pent_ptr, int edgenum, int N
             }
             ptr++;
         }
+        pent_ptr[EgeN].occ=0;
+        pent_ptr[EgeN].cap=0;
+        pent_ptr[EgeN].start_p_array = (int *)calloc(0, (pent_ptr[EgeN].Length + 1) * sizeof(int));
         pent_ptr[EgeN].NoInPatt = NoInPat + EgeN;
         pent_ptr[EgeN].PatFreq=PentTypeFreq[ind_type];
         lp_map[pent_ptr[EgeN].Length].rodNum = lp_map[pent_ptr[EgeN].Length].rodNum + 1;

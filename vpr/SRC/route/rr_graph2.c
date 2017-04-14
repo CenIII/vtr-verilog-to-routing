@@ -1602,24 +1602,36 @@ int get_track_to_pins(
 
 	edge_list_head = *edge_list_ptr;
 	num_conn = 0;
-
+    int tp=0;
 	for (j = seg; j <= end; j++) {
 		if (is_cblock(chan, j, track, seg_details)) {
 
             if(seg_details[track].direction == INC_DIRECTION){
                 start_p=j-seg+1;
                 R_pct = (float)start_p/seg_details[track].length;
-                if((temp = seg_details[track].seg_start - seg_details[track].start) < 0)
-                    start_p+=temp+seg_details[track].length;
+
+//                if((temp = seg_details[track].seg_start - seg_details[track].start) < 0)
+//                    start_p+=temp+seg_details[track].length;
+                tp = seg_details[track].length - (end-seg+1);
+                if( tp > 0)
+                    start_p += tp;
+
             } else{
                 start_p=end-j+1;
                 R_pct = (float)start_p/seg_details[track].length;
-                if(seg_details[track].seg_start == seg_details[track].start
-                   && (temp = seg_details[track].seg_start +seg_details[track].length -1 - seg_details[track].seg_end) > 0)
-                    start_p+=temp;
+
+//                if(seg_details[track].seg_start == seg_details[track].start
+//                   && (temp = seg_details[track].seg_start +seg_details[track].length -1 - seg_details[track].seg_end) > 0)
+//                    start_p+=temp;
+                tp = seg_details[track].length - (end-seg+1);
+                if( tp > 0)
+                    start_p += tp;
             }
 
-			for (pass = 0; pass < 2; ++pass) {
+            VTR_ASSERT(start_p>0 && start_p<=seg_details[track].length);
+
+
+            for (pass = 0; pass < 2; ++pass) {
 				if (CHANX == chan_type) {
 					x = j;
 					y = chan + pass;
@@ -1746,6 +1758,7 @@ int get_track_to_tracks(
 	/* Here we iterate over 'seg' coordinates which could contain switchblocks that will connect us from the current
 	   segment to the desired seg coordinate and channel (chanx/chany) */
 	num_conn = 0;
+    int tp=0;
 	for (sb_seg = start; sb_seg <= end; ++sb_seg) {
 		if (sb_seg < start_sb_seg || sb_seg > end_sb_seg){
 			continue;
@@ -1818,10 +1831,16 @@ int get_track_to_tracks(
 				    BI_DIRECTIONAL == directionality){
                     //todo:这里计算出ｅｄｇｅ的ｓｔａｒｔ_ｐ
                     start_p=end_sb_seg-sb_seg;
+                    VTR_ASSERT(start_p > 0);
                     R_pct = (float)start_p/from_track_detail.length;
-                    if(from_track_detail.seg_start == from_track_detail.start
-                       && (temp = from_track_detail.seg_start +from_track_detail.length -1 - from_track_detail.seg_end) > 0)
-                        start_p+=temp;
+//                    if(from_track_detail.seg_start == from_track_detail.start
+//                       && (temp = from_track_detail.seg_start +from_track_detail.length -1 - from_track_detail.seg_end) > 0)
+//                        start_p+=temp;
+                    tp=from_track_detail.length - (end_sb_seg-start_sb_seg);
+                    if( tp > 0 )
+                        start_p += tp;
+
+                    VTR_ASSERT(start_p <= from_track_detail.length);
 
 					num_conn += get_track_to_chan_seg(from_track, to_chan, to_seg, start_p, R_pct, //todo:传值待修改　对
 									to_type, from_side_a, to_side, L_rr_node_indices, 
@@ -1861,9 +1880,15 @@ int get_track_to_tracks(
 				if (INC_DIRECTION == from_seg_details[from_track].direction || 
 				    BI_DIRECTIONAL == directionality){
                     start_p=sb_seg-start_sb_seg;
-                    R_pct = (float)start_p/from_track_detail.length;
-                    if((temp = from_track_detail.seg_start - from_track_detail.start) < 0)
-                        start_p+=temp+from_track_detail.length;
+                    VTR_ASSERT(start_p > 0);
+                    R_pct = (float)start_p/from_track_detail.length; ///todo:from_type == to_type怎么破？
+//                    if((temp = from_track_detail.seg_start - from_track_detail.start) < 0)
+//                        start_p+=temp+from_track_detail.length;
+                    tp=(from_track_detail.length - (end_sb_seg-start_sb_seg));
+                    if( tp > 0)
+                        start_p += tp;
+                    VTR_ASSERT(start_p <= from_track_detail.length);
+
 					num_conn += get_track_to_chan_seg(from_track, to_chan, to_seg, start_p, R_pct, //todo:传值待修改
 									to_type, from_side_b, to_side, L_rr_node_indices, 
 									sb_conn_map, L_rr_edge_done, edge_list);

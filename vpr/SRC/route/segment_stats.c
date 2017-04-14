@@ -6,12 +6,14 @@ using namespace std;
 #include "vpr_types.h"
 #include "globals.h"
 #include "segment_stats.h"
+#include "SetupPentLine.h"
 
 /*************** Variables and defines local to this module ****************/
 
 #define LONGLINE 0
 
 /******************* Subroutine definitions ********************************/
+void continue_print_branches(t_pent_seg_type_info* pent_ptr);
 
 void get_segment_usage_stats(int num_segment, t_segment_inf * segment_inf) {
 
@@ -50,7 +52,9 @@ void get_segment_usage_stats(int num_segment, t_segment_inf * segment_inf) {
 				length = segment_inf[seg_type].length;
 			else
 				length = LONGLINE;
-
+			//todo:这里还要统计ｃａｐ
+			if(rr_node[inode].pent_type->NoInPatt==0)
+				rr_node[inode].pent_type->cap++;
 			seg_occ_by_length[length] += rr_node[inode].get_occ();
 			seg_cap_by_length[length] += rr_node[inode].get_capacity();
 			seg_occ_by_type[seg_type] += rr_node[inode].get_occ();
@@ -87,8 +91,34 @@ void get_segment_usage_stats(int num_segment, t_segment_inf * segment_inf) {
 		vtr::printf_info("   longline                 %5.3g\n", utilization);
 	}
 
+	vtr::printf_info("\n");
+	vtr::printf_info("Segment usage by pent: pent_type utilization seg1\tseg2\t...\n");
+	vtr::printf_info("                         ------ ----------- -----------------------\n");
+
+	for (int type = 0; type < PENTYPE; type++) {
+		if (pent_type[type].cap != 0) {
+			vtr::printf_info("                         %6d %11.3g\n", type+1, pent_type[type].occ / (float) pent_type[type].cap);//todo:输出段值
+			continue_print_branches(&pent_type[type]);
+		}
+	}
+
 	free(seg_occ_by_length);
 	free(seg_cap_by_length);
 	free(seg_occ_by_type);
 	free(seg_cap_by_type);
+}
+
+void continue_print_branches(t_pent_seg_type_info* pent_ptr){
+
+	float utilization = 0;//(float) pent_type[type].occ / (float) pent_type[type].cap;
+	vtr::printf_info("                              %11.3g\t\t", utilization);
+	for(int i=1;i<=pent_ptr->Length;i++) {
+		vtr::printf_info("%d\t",pent_ptr->start_p_array[i]);
+	}
+	vtr::printf_info("\n");
+
+	if(pent_ptr->numSubEdges > 0){
+		for(int j=0;j<pent_ptr->numSubEdges;j++)
+			continue_print_branches(&pent_ptr->SubEdges[j]);
+	}
 }

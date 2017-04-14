@@ -167,7 +167,8 @@ bool place_and_route(struct s_placer_opts placer_opts, char *place_file, char *n
 				get_serial_num();
 
 				vtr::printf_info("Circuit successfully routed with a channel width factor of %d.\n", width_fac);
-
+                check_route(router_opts.route_type, g_num_rr_switches,
+                            clb_opins_used_locally);
 				routing_stats(router_opts.full_stats, router_opts.route_type,
 							  g_num_rr_switches, segment_inf,
 							  det_routing_arch->num_segment, det_routing_arch->R_minW_nmos,

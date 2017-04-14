@@ -522,6 +522,13 @@ static void recompute_occupancy_from_scratch(vtr::t_ivec ** clb_opins_used_local
 		for (;;) {
 			inode = tptr->index;
 			rr_node[inode].set_occ(rr_node[inode].get_occ() + 1);
+			if(rr_node[inode].type == CHANX || rr_node[inode].type == CHANY) {
+				rr_node[inode].pent_type->occ += 1;
+				//rr_node[inode].pent_type->cap += 1;
+
+				//todo: start_p ---> start_p_array
+				rr_node[inode].pent_type->start_p_array[rr_node[inode].start_p[tptr->iedge]] += 1;
+			}
 
 			if (rr_node[inode].type == SINK) {
 				tptr = tptr->next; /* Skip next segment. */

@@ -7,7 +7,7 @@
 
 #endif //VTR_SETUPPENTLINE_H_H
 
-#define PENTYPE 7
+#define PENTYPE 9
 #define MAXLENGTH 4
 
 void SetupPentLine();

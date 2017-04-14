@@ -1,0 +1,2 @@
+vpr_revision	vpr_status	min_chan_width	critical_path_delay	lb_area	rt_area	pack_time	place_time	min_chan_width_route_time	crit_path_route_time	routed_wirelength	max_odin_mem	max_abc_mem	max_vpr_mem	num_pre_packed_nets	num_pre_packed_blocks	num_post_packed_nets	num_clb	num_io	num_outputs	num_memories	num_mult	error	
+7e14ac5-dirty	success	-1	8.95805	2.96417e+06	736854.	1.31621	0.93347	0.446001	-1	3850	-1	-1	-1	573	605	478	55	32	32	0	0		

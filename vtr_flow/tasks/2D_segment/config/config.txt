@@ -2,7 +2,7 @@
 # Configuration file for running experiments
 ##############################################
 
-script_params=-starting_stage vpr -vpr_route_chan_width 110
+script_params=-starting_stage vpr -vpr_route_chan_width 120
 #cmos_tech_behavior=PTM_22nm/22nm.xml
 
 # Path to directory of circuits to use
