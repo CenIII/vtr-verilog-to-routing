@@ -80,11 +80,11 @@
 
   </switchlist>
   <segmentlist>
-    <segment freq="0.85" name="l1s" length="1" type="unidir" Rmetal="25" Cmetal="0.49e-14">
+    <!-- <segment freq="0.85" name="l1s" length="1" type="unidir" Rmetal="25" Cmetal="0.49e-14">
         <mux name="l2s_mux"/>
         <sb type="pattern">1 1</sb>
         <cb type="pattern">1</cb>
-    </segment>
+    </segment> -->
       <!-- 85% length-2 wires on the semi-global metal layer -->
     <segment freq="0.85" name="l2s" length="2" type="unidir" Rmetal="50" Cmetal="0.981e-14">
         <mux name="l2s_mux"/>
@@ -98,6 +98,11 @@
       <cb type="pattern">1 1 1 1</cb>
     </segment>
 
+    <segment freq="0.85" name="l6g" length="6" type="unidir" Rmetal="151" Cmetal="2.943e-14">
+      <mux name="l2s_mux"/>
+      <sb type="pattern">1 1 1 1 1 1 1</sb>
+      <cb type="pattern">1 1 1 1 1 1</cb>
+    </segment>
   </segmentlist>
   
   <!-- Define custom switch blocks -->
@@ -115,10 +120,12 @@
         <func type="rb" formula="W-t-2"/>
       </switchfuncs>
       <!-- <wireconn from_type="l1s" to_type="l2s,l1s" from_switchpoint="0" to_switchpoint="0"/> -->
-      <wireconn from_type="l2s" to_type="l2s,l4g" from_switchpoint="0" to_switchpoint="0"/>
-      <wireconn from_type="l4g" to_type="l2s,l4g" from_switchpoint="0" to_switchpoint="0"/>
-      <wireconn from_type="l2s" to_type="l2s,l4g" from_switchpoint="1" to_switchpoint="0"/>
-      <wireconn from_type="l4g" to_type="l2s,l4g" from_switchpoint="1,2,3" to_switchpoint="0"/>
+      <wireconn from_type="l2s" to_type="l2s,l4g,l6g" from_switchpoint="0" to_switchpoint="0"/>
+      <wireconn from_type="l4g" to_type="l2s,l4g,l6g" from_switchpoint="0" to_switchpoint="0"/>
+      <wireconn from_type="l6g" to_type="l2s,l4g,l6g" from_switchpoint="0" to_switchpoint="0"/>
+      <wireconn from_type="l2s" to_type="l2s,l4g,l6g" from_switchpoint="1" to_switchpoint="0"/>
+      <wireconn from_type="l4g" to_type="l2s,l4g,l6g" from_switchpoint="1,2,3" to_switchpoint="0"/>
+      <wireconn from_type="l6g" to_type="l2s,l4g,l6g" from_switchpoint="1,2,3,4,5" to_switchpoint="0"/>
 
       <!-- <wireconn from_type="l2s" to_type="l1s,l2s" from_switchpoint="0" to_switchpoint="0"/> -->
       <!-- <wireconn from_type="l4g" to_type="l4g" from_switchpoint="0" to_switchpoint="0"/>
@@ -137,10 +144,12 @@
         <func type="tr" formula="t+1"/>
         <func type="rb" formula="W-t-2"/>
       </switchfuncs>
-	  <wireconn from_type="l2s" to_type="l2s,l4g" from_switchpoint="0" to_switchpoint="0"/>
-      <wireconn from_type="l4g" to_type="l2s,l4g" from_switchpoint="0" to_switchpoint="0"/>
-      <wireconn from_type="l2s" to_type="l2s,l4g" from_switchpoint="1" to_switchpoint="0"/>
-      <wireconn from_type="l4g" to_type="l2s,l4g" from_switchpoint="1,2,3" to_switchpoint="0"/>
+      <wireconn from_type="l2s" to_type="l2s,l4g,l6g" from_switchpoint="0" to_switchpoint="0"/>
+      <wireconn from_type="l4g" to_type="l2s,l4g,l6g" from_switchpoint="0" to_switchpoint="0"/>
+      <wireconn from_type="l6g" to_type="l2s,l4g,l6g" from_switchpoint="0" to_switchpoint="0"/>
+      <wireconn from_type="l2s" to_type="l2s,l4g,l6g" from_switchpoint="1" to_switchpoint="0"/>
+      <wireconn from_type="l4g" to_type="l2s,l4g,l6g" from_switchpoint="1,2,3" to_switchpoint="0"/>
+      <wireconn from_type="l6g" to_type="l2s,l4g,l6g" from_switchpoint="1,2,3,4,5" to_switchpoint="0"/>
       <!-- <wireconn from_type="l4g" to_type="l4g" from_switchpoint="0" to_switchpoint="0"/>
       <wireconn from_type="l4g" to_type="l2s,l1s" from_switchpoint="0" to_switchpoint="0"/> -->
     </switchblock>
@@ -153,8 +162,9 @@
         <func type="rl" formula="t"/>
         <func type="tb" formula="t"/>
       </switchfuncs>
-	  <wireconn from_type="l2s" to_type="l2s,l4g" from_switchpoint="0" to_switchpoint="0"/>
-      <wireconn from_type="l4g" to_type="l2s,l4g" from_switchpoint="0" to_switchpoint="0"/>      
+      <wireconn from_type="l2s" to_type="l2s,l4g,l6g" from_switchpoint="0" to_switchpoint="0"/>
+      <wireconn from_type="l4g" to_type="l2s,l4g,l6g" from_switchpoint="0" to_switchpoint="0"/>
+      <wireconn from_type="l6g" to_type="l2s,l4g,l6g" from_switchpoint="0" to_switchpoint="0"/>   
       <!-- <wireconn from_type="l4g" to_type="l4g" from_switchpoint="0" to_switchpoint="0"/>
       <wireconn from_type="l4g" to_type="l1s,l2s" from_switchpoint="0" to_switchpoint="0"/> -->
     </switchblock>

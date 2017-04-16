@@ -15,8 +15,28 @@ void add_one_map_ptr(t_pent_seg_type_info* pent_ptr);
 void map_len_to_pent();
 
 /*straight or pent, subnum, length, x or y, inc or dec. Deep First Traverse. Notice: NoInPat is Bread First*/
-char PentTypeData[PENTYPE][50] = {"-s01xi","-s02xi","-s04xi", "-p12xi-p02yi","-p12xi-p02yd","-p22xi-p02xi-p02yi","-p22xi-p02xi-p02yd","-p12xi-p12yi-p02xi","-p12xi-p12yd-p02xi"};
-float PentTypeFreq[PENTYPE] = {0,0,72,18,18,0,0,35,35};
+char PentTypeData[PENTYPE][50] = {"-s02xi",
+                                  "-p12xi-p12yi-p02xi","-p12xi-p12yd-p02xi",
+                                  "-p12xi-p02yi","-p12xi-p02yd",
+
+                                  "-p12xi-p04yi","-p12xi-p04yd",
+                                  "-p14xi-p02yi","-p14xi-p02yd",
+
+                                  "-s04xi",
+                                  "-s06xi"
+
+};
+float PentTypeFreq[PENTYPE] = {0,
+
+                               65,65,
+                               15,15,
+
+                               15,15,
+                               15,15,
+
+                               10,
+                               20
+};
 
 
 void build_one_rod(char* ptr, t_pent_seg_type_info *pent_ptr, int edgenum, int NoInPat, int ind_type){

@@ -26,20 +26,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d16a9bc9-15e4-4bd9-ae19-22479afb8681" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/vtr_flow/tasks/2D_segment/50.tar.gz" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vpr/SRC/base/SetupPentLine.cpp" afterPath="$PROJECT_DIR$/vpr/SRC/base/SetupPentLine.cpp" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vpr/SRC/base/SetupPentLine.h" afterPath="$PROJECT_DIR$/vpr/SRC/base/SetupPentLine.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vpr/SRC/base/place_and_route.c" afterPath="$PROJECT_DIR$/vpr/SRC/base/place_and_route.c" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vpr/SRC/base/vpr_types.h" afterPath="$PROJECT_DIR$/vpr/SRC/base/vpr_types.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vpr/SRC/route/check_route.c" afterPath="$PROJECT_DIR$/vpr/SRC/route/check_route.c" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vpr/SRC/route/route_tree_timing.c" afterPath="$PROJECT_DIR$/vpr/SRC/route/route_tree_timing.c" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vpr/SRC/route/rr_graph2.c" afterPath="$PROJECT_DIR$/vpr/SRC/route/rr_graph2.c" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vpr/SRC/route/segment_stats.c" afterPath="$PROJECT_DIR$/vpr/SRC/route/segment_stats.c" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vtr_flow/arch/power/k6_N10_I40_Fi6_L4_frac0_ff1_22nm(copy).xml" afterPath="$PROJECT_DIR$/vtr_flow/arch/power/k6_N10_I40_Fi6_L4_frac0_ff1_22nm(copy).xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vtr_flow/arch/power/k6_N10_I40_Fi6_L4_frac0_ff1_22nm_2D.xml" afterPath="$PROJECT_DIR$/vtr_flow/arch/power/k6_N10_I40_Fi6_L4_frac0_ff1_22nm_2D.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vtr_flow/parse/parse_config/vpr_standard.txt" afterPath="$PROJECT_DIR$/vtr_flow/parse/parse_config/vpr_standard.txt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vtr_flow/tasks/2D_segment/config/config.txt" afterPath="$PROJECT_DIR$/vtr_flow/tasks/2D_segment/config/config.txt" />
     </list>
     <ignored path="vtr-8.0-Clion.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -59,41 +50,41 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="route_tree_timing.c" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/vpr/SRC/route/route_tree_timing.c">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="9675">
-              <caret line="645" column="33" selection-start-line="645" selection-start-column="33" selection-end-line="645" selection-end-column="33" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="vpr_types.h" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/vpr/SRC/base/vpr_types.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="13125">
-              <caret line="875" column="26" selection-start-line="875" selection-start-column="26" selection-end-line="875" selection-end-column="26" />
+            <state relative-caret-position="13335">
+              <caret line="889" column="13" selection-start-line="889" selection-start-column="8" selection-end-line="889" selection-end-column="14" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SetupPentLine.cpp" pinned="false" current-in-tab="false">
+      <file leaf-file-name="SetupPentLine.cpp" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/vpr/SRC/base/SetupPentLine.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="180">
-              <caret line="17" column="105" selection-start-line="17" selection-start-column="105" selection-end-line="17" selection-end-column="105" />
+            <state relative-caret-position="390">
+              <caret line="37" column="32" selection-start-line="37" selection-start-column="32" selection-end-line="37" selection-end-column="32" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="rr_graph2.c" pinned="false" current-in-tab="true">
+      <file leaf-file-name="rr_graph2.c" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/vpr/SRC/route/rr_graph2.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="167">
-              <caret line="284" column="0" selection-start-line="284" selection-start-column="0" selection-end-line="310" selection-end-column="0" />
+            <state relative-caret-position="187">
+              <caret line="295" column="19" selection-start-line="295" selection-start-column="19" selection-end-line="295" selection-end-column="19" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="globals.h" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/vpr/SRC/base/globals.h">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1605">
+              <caret line="107" column="20" selection-start-line="107" selection-start-column="20" selection-end-line="107" selection-end-column="20" />
               <folding />
             </state>
           </provider>
@@ -102,8 +93,8 @@
       <file leaf-file-name="SetupPentLine.h" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/vpr/SRC/base/SetupPentLine.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="75">
-              <caret line="5" column="29" selection-start-line="5" selection-start-column="29" selection-end-line="5" selection-end-column="29" />
+            <state relative-caret-position="105">
+              <caret line="7" column="30" selection-start-line="7" selection-start-column="30" selection-end-line="7" selection-end-column="30" />
               <folding />
             </state>
           </provider>
@@ -196,8 +187,8 @@
         <option value="$PROJECT_DIR$/vpr/SRC/route/check_route.c" />
         <option value="$PROJECT_DIR$/vpr/SRC/route/segment_stats.c" />
         <option value="$PROJECT_DIR$/vpr/SRC/base/SetupPentLine.h" />
-        <option value="$PROJECT_DIR$/vpr/SRC/base/SetupPentLine.cpp" />
         <option value="$PROJECT_DIR$/vpr/SRC/route/rr_graph2.c" />
+        <option value="$PROJECT_DIR$/vpr/SRC/base/SetupPentLine.cpp" />
       </list>
     </option>
   </component>
@@ -646,7 +637,7 @@
       <envs />
       <method />
     </configuration>
-    <configuration default="false" name="vpr" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="$PROJECT_DIR$/vtr_flow/arch/power/k6_N10_I40_Fi6_L4_frac0_ff1_22nm(copy).xml /home/ivan/Documents/vtr-8.0-Clion/vtr_flow/benchmarks/blif/6/clma.blif -route_chan_width 120 -nodisp" WORKING_DIR="" PASS_PARENT_ENVS_2="true" PROJECT_NAME="VTR" TARGET_NAME="vpr" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="VTR" RUN_TARGET_NAME="vpr">
+    <configuration default="false" name="vpr" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="$PROJECT_DIR$/vtr_flow/arch/power/k6_N10_I40_Fi6_L4_frac0_ff1_22nm_2D.xml /home/ivan/Documents/vtr-8.0-Clion/vtr_flow/benchmarks/blif/6/ex1010.blif -route_chan_width 120 -nodisp" WORKING_DIR="" PASS_PARENT_ENVS_2="true" PROJECT_NAME="VTR" TARGET_NAME="vpr" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="VTR" RUN_TARGET_NAME="vpr">
       <envs />
       <method />
     </configuration>
@@ -695,12 +686,15 @@
       <workItem from="1489383331065" duration="77000" />
       <workItem from="1489483330163" duration="78795000" />
       <workItem from="1490894914311" duration="47062000" />
-      <workItem from="1492105695505" duration="3781000" />
+      <workItem from="1492105695505" duration="12984000" />
+      <workItem from="1492343428270" duration="10000" />
+      <workItem from="1492347818349" duration="1143000" />
+      <workItem from="1492349443114" duration="12484000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="409459000" />
+    <option name="totallyTimeSpent" value="432299000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -715,14 +709,13 @@
     <frame x="33" y="24" width="1887" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.15396996" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1335837" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3286638" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.29418105" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.28448275" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="CMake" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3286638" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.27741936" sideWeight="0.50429183" order="9" side_tool="true" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32004312" sideWeight="0.49609375" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3286638" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2338362" sideWeight="0.49570817" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.35523385" sideWeight="0.49570817" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3275862" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
@@ -732,6 +725,7 @@
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32004312" sideWeight="0.49609375" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
     <layout-to-restore>
@@ -826,7 +820,7 @@
         </line-breakpoint>
         <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/vpr/SRC/route/rr_graph2.c</url>
-          <line>315</line>
+          <line>322</line>
           <option name="timeStamp" value="131" />
         </line-breakpoint>
         <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
@@ -872,7 +866,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/vpr/SRC/route/rr_graph2.c</url>
-          <line>2067</line>
+          <line>2074</line>
           <option name="timeStamp" value="161" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
@@ -928,12 +922,12 @@
         </line-breakpoint>
         <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/vpr/SRC/route/rr_graph2.c</url>
-          <line>2043</line>
+          <line>2050</line>
           <option name="timeStamp" value="189" />
         </line-breakpoint>
         <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/vpr/SRC/route/rr_graph2.c</url>
-          <line>1667</line>
+          <line>1674</line>
           <option name="timeStamp" value="193" />
         </line-breakpoint>
         <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
@@ -945,17 +939,17 @@
         <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <condition expression="start_p==5 || start_p == 0" language="ObjectiveC" />
           <url>file://$PROJECT_DIR$/vpr/SRC/route/rr_graph2.c</url>
-          <line>1633</line>
+          <line>1640</line>
           <option name="timeStamp" value="198" />
         </line-breakpoint>
         <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/vpr/SRC/route/rr_graph2.c</url>
-          <line>1612</line>
+          <line>1619</line>
           <option name="timeStamp" value="199" />
         </line-breakpoint>
         <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/vpr/SRC/route/rr_graph2.c</url>
-          <line>1623</line>
+          <line>1630</line>
           <option name="timeStamp" value="200" />
         </line-breakpoint>
         <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
@@ -1015,42 +1009,42 @@
         </line-breakpoint>
         <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/vpr/SRC/route/rr_graph2.c</url>
-          <line>1753</line>
+          <line>1760</line>
           <option name="timeStamp" value="241" />
         </line-breakpoint>
         <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <condition expression="tp&gt;1" language="ObjectiveC" />
           <url>file://$PROJECT_DIR$/vpr/SRC/route/rr_graph2.c</url>
-          <line>1888</line>
+          <line>1895</line>
           <option name="timeStamp" value="244" />
         </line-breakpoint>
         <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <condition expression="tp&gt;1" language="ObjectiveC" />
           <url>file://$PROJECT_DIR$/vpr/SRC/route/rr_graph2.c</url>
-          <line>1840</line>
+          <line>1847</line>
           <option name="timeStamp" value="245" />
         </line-breakpoint>
         <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <condition expression="tp&gt;1" language="ObjectiveC" />
           <url>file://$PROJECT_DIR$/vpr/SRC/route/rr_graph2.c</url>
-          <line>1627</line>
+          <line>1634</line>
           <option name="timeStamp" value="246" />
         </line-breakpoint>
         <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <condition expression="tp&gt;1" language="ObjectiveC" />
           <url>file://$PROJECT_DIR$/vpr/SRC/route/rr_graph2.c</url>
-          <line>1616</line>
+          <line>1623</line>
           <option name="timeStamp" value="247" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <condition expression="start_p==from_track_detail.length+1" language="ObjectiveC" />
           <url>file://$PROJECT_DIR$/vpr/SRC/route/rr_graph2.c</url>
-          <line>1889</line>
+          <line>1896</line>
           <option name="timeStamp" value="250" />
         </line-breakpoint>
         <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/vpr/SRC/route/rr_graph2.c</url>
-          <line>1839</line>
+          <line>1846</line>
           <option name="timeStamp" value="253" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
@@ -1063,11 +1057,16 @@
           <line>542</line>
           <option name="timeStamp" value="259" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/vpr/SRC/route/rr_graph2.c</url>
+          <line>214</line>
+          <option name="timeStamp" value="260" />
+        </line-breakpoint>
       </breakpoints>
       <breakpoints-dialog>
         <breakpoints-dialog />
       </breakpoints-dialog>
-      <option name="time" value="260" />
+      <option name="time" value="261" />
     </breakpoint-manager>
     <watches-manager>
       <configuration name="CMakeRunConfiguration">
@@ -1123,7 +1122,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="4125">
           <caret line="285" column="0" selection-start-line="285" selection-start-column="0" selection-end-line="285" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1222,7 +1220,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="105">
           <caret line="7" column="29" selection-start-line="7" selection-start-column="29" selection-end-line="7" selection-end-column="29" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1265,7 +1262,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="4395">
           <caret line="293" column="37" selection-start-line="293" selection-start-column="37" selection-end-line="293" selection-end-column="37" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1309,14 +1305,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="464">
           <caret line="128" column="16" selection-start-line="128" selection-start-column="16" selection-end-line="128" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vpr/SRC/base/globals.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="199">
-          <caret line="106" column="23" selection-start-line="106" selection-start-column="23" selection-end-line="106" selection-end-column="23" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1420,14 +1408,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/vpr/SRC/base/vpr_types.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="13125">
-          <caret line="875" column="26" selection-start-line="875" selection-start-column="26" selection-end-line="875" selection-end-column="26" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/vpr/SRC/route/check_route.c">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="7890">
@@ -1470,26 +1450,42 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/vpr/SRC/base/SetupPentLine.h">
+    <entry file="file://$PROJECT_DIR$/vpr/SRC/base/vpr_types.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="5" column="29" selection-start-line="5" selection-start-column="29" selection-end-line="5" selection-end-column="29" />
+        <state relative-caret-position="13335">
+          <caret line="889" column="13" selection-start-line="889" selection-start-column="8" selection-end-line="889" selection-end-column="14" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/vpr/SRC/base/SetupPentLine.cpp">
+    <entry file="file://$PROJECT_DIR$/vpr/SRC/base/globals.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="17" column="105" selection-start-line="17" selection-start-column="105" selection-end-line="17" selection-end-column="105" />
+        <state relative-caret-position="1605">
+          <caret line="107" column="20" selection-start-line="107" selection-start-column="20" selection-end-line="107" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vpr/SRC/base/SetupPentLine.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="7" column="30" selection-start-line="7" selection-start-column="30" selection-end-line="7" selection-end-column="30" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/vpr/SRC/route/rr_graph2.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="167">
-          <caret line="284" column="0" selection-start-line="284" selection-start-column="0" selection-end-line="310" selection-end-column="0" />
+        <state relative-caret-position="187">
+          <caret line="295" column="19" selection-start-line="295" selection-start-column="19" selection-end-line="295" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vpr/SRC/base/SetupPentLine.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="390">
+          <caret line="37" column="32" selection-start-line="37" selection-start-column="32" selection-end-line="37" selection-end-column="32" />
           <folding />
         </state>
       </provider>
