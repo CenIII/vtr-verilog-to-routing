@@ -26,7 +26,7 @@ char PentTypeData[PENTYPE][50] = {"-s02xi",
                                   "-s06xi"
 
 };
-float PentTypeFreq[PENTYPE] = {0,
+float PentTypeFreq[PENTYPE];/* = {0,
 
                                65,65,
                                15,15,
@@ -36,7 +36,7 @@ float PentTypeFreq[PENTYPE] = {0,
 
                                10,
                                20
-};
+};*/
 
 
 void build_one_rod(char* ptr, t_pent_seg_type_info *pent_ptr, int edgenum, int NoInPat, int ind_type){

@@ -9,6 +9,7 @@
 
 #define PENTYPE 11
 #define MAXLENGTH 6
+float PentTypeFreq[PENTYPE];
 
 void SetupPentLine();
 void SetPentFreq(int index, int freq);

@@ -62,7 +62,8 @@ void routing_stats(bool full_stats, enum e_route_type route_type,
 	}
 	/* Todo: need to add pitch of routing to blocks with height > 3 */
 	vtr::printf_info("\tTotal logic block area (Warning, need to add pitch of routing to blocks with height > 3): %g\n", area);
-
+	//area hook
+	area_hook=area;
 	used_area = 0;
 	for (i = 0; i < num_blocks; i++) {
 		if (block[i].type != IO_TYPE) {

@@ -97,6 +97,8 @@ map<int, int> *g_switch_fanin_remap = NULL; /* an array of map. array index: [0.
 /* New added. */
 t_pent_seg_type_info *pent_type;
 t_len_to_pent_map *lp_map;
+float crit_delay_hook;
+float area_hook;
 
 /* Stores the SOURCE and SINK nodes of all CLBs (not valid for pads).     */
 

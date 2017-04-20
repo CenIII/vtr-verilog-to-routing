@@ -460,6 +460,8 @@ void count_unidir_routing_transistors(t_segment_inf * /*segment_inf*/,
 	vtr::printf_info("\n");
 	vtr::printf_info("Routing area (in minimum width transistor areas)...\n");
 	vtr::printf_info("\tTotal routing area: %#g, per logic tile: %#g\n", ntrans, ntrans / (float) (nx * ny));
+	//area hook
+	area_hook+=ntrans;
 }
 
 static float get_cblock_trans(int *num_inputs_to_cblock, int wire_to_ipin_switch,

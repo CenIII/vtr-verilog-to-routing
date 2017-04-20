@@ -106,6 +106,8 @@ extern int *vpack_to_clb_net_mapping; /* [0..num_vpack_nets - 1] */
 
 extern t_pent_seg_type_info *pent_type;
 extern t_len_to_pent_map *lp_map;
+extern float crit_delay_hook;
+extern float area_hook;
 
 /* chan_width is for x|y-directed channels; i.e. between rows */
 extern t_chan_width chan_width;

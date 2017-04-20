@@ -171,7 +171,7 @@ void vpr_print_args(int argc, const char** argv) {
 void vpr_init(const int argc, const char **argv,
 		t_options *options,
 		t_vpr_setup *vpr_setup,
-		t_arch *arch) {
+		t_arch *arch, char* circuit_path) {
 
 	log_set_output_file("vpr_stdout.log");
 
@@ -190,7 +190,7 @@ void vpr_init(const int argc, const char **argv,
 		memset(arch, 0, sizeof(t_arch));
 
 		/* Read in user options */
-		ReadOptions(argc, argv, options);
+		ReadOptions(argc, argv, options, circuit_path);
 
 		/* Timing option priorities */
 		vpr_setup->TimingEnabled = IsTimingEnabled(options);
