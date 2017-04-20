@@ -19,6 +19,7 @@ using namespace std;
 #include "vtr_memory.h"
 #include "vtr_log.h"
 
+#include "math.h"
 #include "vpr_error.h"
 #include "vpr_api.h"
 #include "path_delay.h" /* for timing_analysis_runtime */
@@ -33,6 +34,7 @@ constexpr int ERROR_EXIT_CODE = 1; //Something went wrong internally
 constexpr int UNIMPLEMENTABLE_EXIT_CODE = 2; //Could not implement (e.g. unroutable)
 
 #define CIRC_NUM 30
+#define SEG_TYPE_NUM 6
 #define DE 1
 #define B 1
 
@@ -62,8 +64,26 @@ void init_seg_rates(int *seg_rates, float *PentFreq){
 
 }
 
-void newSegorSB(){
+void seg_add_op(const int* seg_a, int* seg_b, int* seg_dest, int seg_num){
+    for (int i = 0; i < seg_num; ++i)
+        seg_dest[i] = seg_a[i]+seg_b[i];
+}
 
+void SRates_to_PTF_transfer(int* seg_rates, float* PentType_f){
+
+}
+
+void newSegorSB(const int* seg_rates, int* delta_seg_rates, int* seg_rates_star, float* PentType_f, const bool isOptd,const float T){
+    //先决定seg_rates_star
+        //如果△Ｃ优化了，则greedy策略继续采用delta_seg_rates
+    if(!isOptd){
+        //否则随机出一个delta_seg_rates，赋值给delta_seg_rates，增并给seg_rates_star　//todo: 如何随机呢？
+        //todo:随机delta_seg_rates
+    }
+
+    seg_add_op(seg_rates, delta_seg_rates,seg_rates_star,SEG_TYPE_NUM);
+    //再由seg_rates_star转换到PentType_f
+    SRates_to_PTF_transfer(seg_rates_star, PentType_f);
 }
 
 float EvaluateThisResult(float* crit_delay, float* area){
@@ -76,7 +96,28 @@ float EvaluateThisResult(float* crit_delay, float* area){
 
 }
 
-bool acceptOrNot(){
+bool acceptOrNot(float dC, float T, float Beta, int* changes, int* seg_r, int* seg_r_star){
+    if(dC<0){
+        (*changes)++;
+        //todo:更改设计
+        for (int i = 0; i < SEG_TYPE_NUM; ++i) {
+            seg_r[i] = seg_r_star[i]; //更改ｓｅｇ
+            //todo:更改ＳＢ
+        }
+        return true;
+    }else{
+        double r=drand48();
+        if(r > exp(-dC/T*Beta)){
+            //todo:更改设计
+            for (int i = 0; i < SEG_TYPE_NUM; ++i) {
+                seg_r[i] = seg_r_star[i]; //更改ｓｅｇ
+                //todo:更改ＳＢ
+            }
+            return true;
+        }else
+            return false;
+    }
+
 
 }
 /**
@@ -98,7 +139,8 @@ int main(int argc, const char **argv) {
 	clock_t entire_flow_begin,entire_flow_end;
 
 	char** file_names;
-	int seg_rates[6];
+	int seg_rates[SEG_TYPE_NUM],delta_seg_rates[SEG_TYPE_NUM], seg_rates_star[SEG_TYPE_NUM];
+
 	bool pass;
 	int freeze_count=0;
 	int changes=0, trial=0;
@@ -108,16 +150,15 @@ int main(int argc, const char **argv) {
 	float T=100;
 	//parameters initialization
 	read_file_name(file_names);
-	init_seg_rates(seg_rates, PentTypeFreq);
+	init_seg_rates(seg_rates, PentTypeFreq);//给seg_rates和PentT赋值
 
 	while(ExitCriterion(pass, freeze_count, (float)changes/(float)trial)) {
 
 		while(InnerLoopCriterion(changes, trial)) {
 
-			newSegorSB(seg_rates, PentTypeFreq, dC>0, T);//change the Seg or SB
+			newSegorSB(seg_rates, delta_seg_rates, seg_rates_star, PentTypeFreq, dC<0, T);//change the Seg or SB
 
 			entire_flow_begin = clock();
-
 
 			//main loop for every benchmarks
 			for(int bmks=0;bmks<30;bmks++) {
@@ -137,7 +178,8 @@ int main(int argc, const char **argv) {
 						vpr_init_pre_place_and_route(vpr_setup, Arch);
 						bool place_route_succeeded = vpr_place_and_route(&vpr_setup, Arch);
 						//hook key data
-						crit_delay[bmks]=crit_delay_hook;
+                        //get the data into array of 30, the data is critical_path_delay, lb_area, rt_area
+                        crit_delay[bmks]=crit_delay_hook;
 						area[bmks]=area_hook;
 						/* Signal implementation failure */
 						if (!place_route_succeeded) {
@@ -169,24 +211,24 @@ int main(int argc, const char **argv) {
 					/* Signal error to scripts */
 					return ERROR_EXIT_CODE;
 				}
-				//get the data into array of 30, the data is critical_path_delay, lb_area, rt_area
 
 				//free all data except the data
 			}
+
 			//calc the evaluation
 			C_star=EvaluateThisResult(crit_delay, area);
 			dC=C_star-C;
 			//trial
-			trial++;
+			trial++; //内循环次数
 			//ac or not  "SA"
-			acceptOrNot(dC, T, B, &changes);
-			//changes
-
+            //changes
+			acceptOrNot(dC, T, B, &changes, seg_rates, seg_rates_star);
+            C=C_star;
 			//clear the 30 data
-		}//InnerLoop
+		}                                       //InnerLoop
 		//Temperature update
 		T*=0.95;
-		if(dC>DE){
+		if(dC>DE){//todo:这个dC有问题
 			freeze_count = 0;
 			pass = true;
 		}else {
