@@ -148,6 +148,12 @@ void XmlReadArch(const char *ArchFile, const bool timing_enabled,
 		struct s_arch *arch, t_type_descriptor ** Types,
 		int *NumTypes) {
 
+	/* This gives access to the architecture file name to
+ all architecture-parser functions       */
+	EMPTY_TYPE = NULL;
+	FILL_TYPE = NULL;
+	IO_TYPE = NULL;
+
 	const char *Prop;
 	pugi::xml_node Next;
 	ReqOpt POWER_REQD, SWITCHBLOCKLIST_REQD;

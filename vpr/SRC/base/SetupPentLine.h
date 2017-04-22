@@ -7,9 +7,11 @@
 
 #endif //VTR_SETUPPENTLINE_H_H
 
-#define PENTYPE 11
+#define PENTYPE 9
 #define MAXLENGTH 6
-float PentTypeFreq[PENTYPE];
+extern float PentTypeFreq[PENTYPE];
+extern bool PairedOrNot[PENTYPE];
+extern int PentLengthSum[PENTYPE];
 
 void SetupPentLine();
 void SetPentFreq(int index, int freq);

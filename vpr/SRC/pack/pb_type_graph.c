@@ -500,6 +500,7 @@ static void free_pb_graph(t_pb_graph_node *pb_graph_node) {
 				free(edges[i].pack_pattern_names);
 			}
 		}
+
 		edges_head = edges_head->next;
 		num_edges_head = num_edges_head->next;
 		free(edges);
@@ -874,10 +875,12 @@ static void alloc_and_load_complete_interc_edges(
 
 	edges = (t_pb_graph_edge*) vtr::calloc(in_count * out_count, sizeof(t_pb_graph_edge));
 	cur = (vtr::t_linked_vptr*) vtr::malloc(sizeof(vtr::t_linked_vptr));
+	cur->next=NULL;
 	cur->next = edges_head;
 	edges_head = cur;
 	cur->data_vptr = (void *) edges;
 	cur = (vtr::t_linked_vptr*) vtr::malloc(sizeof(vtr::t_linked_vptr));
+	cur->next=NULL;
 	cur->next = num_edges_head;
 	num_edges_head = cur;
 	cur->data_vptr = (void *) ((long) in_count * out_count);
@@ -962,10 +965,12 @@ static void alloc_and_load_direct_interc_edges(
 	edges = (t_pb_graph_edge*) vtr::calloc(num_input_ptrs[0],
 			sizeof(t_pb_graph_edge));
 	cur = (vtr::t_linked_vptr*) vtr::malloc(sizeof(vtr::t_linked_vptr));
+	cur->next = NULL;
 	cur->next = edges_head;
 	edges_head = cur;
 	cur->data_vptr = (void *) edges;
 	cur = (vtr::t_linked_vptr*) vtr::malloc(sizeof(vtr::t_linked_vptr));
+	cur->next = NULL;
 	cur->next = num_edges_head;
 	num_edges_head = cur;
 	cur->data_vptr = (void *) ((long) num_input_ptrs[0]);
@@ -1024,10 +1029,12 @@ static void alloc_and_load_mux_interc_edges(t_interconnect * interconnect,
 
 	edges = (t_pb_graph_edge*) vtr::calloc(num_input_sets, sizeof(t_pb_graph_edge));
 	cur = (vtr::t_linked_vptr*) vtr::malloc(sizeof(vtr::t_linked_vptr));
+	cur->next = NULL;
 	cur->next = edges_head;
 	edges_head = cur;
 	cur->data_vptr = (void *) edges;
 	cur = (vtr::t_linked_vptr*) vtr::malloc(sizeof(vtr::t_linked_vptr));
+	cur->next = NULL;
 	cur->next = num_edges_head;
 	num_edges_head = cur;
 	cur->data_vptr = (void *) ((long) num_input_sets);

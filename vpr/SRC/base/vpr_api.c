@@ -171,7 +171,7 @@ void vpr_print_args(int argc, const char** argv) {
 void vpr_init(const int argc, const char **argv,
 		t_options *options,
 		t_vpr_setup *vpr_setup,
-		t_arch *arch, char* circuit_path) {
+		t_arch *arch) {
 
 	log_set_output_file("vpr_stdout.log");
 
@@ -190,7 +190,7 @@ void vpr_init(const int argc, const char **argv,
 		memset(arch, 0, sizeof(t_arch));
 
 		/* Read in user options */
-		ReadOptions(argc, argv, options, circuit_path);
+		ReadOptions(argc, argv, options);
 
 		/* Timing option priorities */
 		vpr_setup->TimingEnabled = IsTimingEnabled(options);
@@ -914,6 +914,7 @@ void vpr_free_all(t_arch& Arch,
 		const t_options& options,
 		t_vpr_setup& vpr_setup) {
 
+	//freePentMem();
 	free_rr_graph();
 	if (vpr_setup.RouterOpts.doRouting) {
 		free_route_structs();
@@ -928,9 +929,9 @@ void vpr_free_all(t_arch& Arch,
  *  Used when you need fine-grained control over VPR that the main VPR operations do not enable
  ****************************************************************************************************/
 /* Read in user options */
-void vpr_read_options(const int argc, const char **argv, t_options * options) {
-	ReadOptions(argc, argv, options);
-}
+//void vpr_read_options(const int argc, const char **argv, t_options * options) {
+//	ReadOptions(argc, argv, options);
+//}
 
 /* Read in arch and circuit */
 void vpr_setup_vpr(t_options *Options, const bool TimingEnabled,

@@ -3340,11 +3340,13 @@ void print_timing_stats(void) {
 	if (pb_max_internal_delay != UNDEFINED && pb_max_internal_delay > critical_path_delay) {
 		critical_path_delay = pb_max_internal_delay;
 		vtr::printf_info("Final critical path: %g ns", 1e9 * critical_path_delay);
-		crit_delay_hook=critical_path_delay;
+		crit_delay_hook= critical_path_delay;
 		vtr::printf_direct(" (capped by fmax of block type %s)", pbtype_max_internal_delay->name);
 		
 	} else {
 		vtr::printf_info("Final critical path: %g ns", 1e9 * critical_path_delay);
+		crit_delay_hook= critical_path_delay;
+
 	}
 
 	if (g_sdc->num_constrained_clocks <= 1) {

@@ -1,4 +1,7 @@
 /home/ivan/Documents/vtr-8.0-Clion/vtr_flow/benchmarks/blif/6/clma.blif
+/home/ivan/Documents/vtr-8.0-Clion/vtr_flow/benchmarks/blif/6/C3540.blif
+/home/ivan/Documents/vtr-8.0-Clion/vtr_flow/benchmarks/blif/6/apex1.blif
+/home/ivan/Documents/vtr-8.0-Clion/vtr_flow/benchmarks/blif/6/cps.blif
 /home/ivan/Documents/vtr-8.0-Clion/vtr_flow/benchmarks/blif/6/s38584.1.blif
 /home/ivan/Documents/vtr-8.0-Clion/vtr_flow/benchmarks/blif/6/pdc.blif
 /home/ivan/Documents/vtr-8.0-Clion/vtr_flow/benchmarks/blif/6/s38417.blif
@@ -25,6 +28,7 @@
 /home/ivan/Documents/vtr-8.0-Clion/vtr_flow/benchmarks/blif/6/C5315.blif
 /home/ivan/Documents/vtr-8.0-Clion/vtr_flow/benchmarks/blif/6/apex3.blif
 /home/ivan/Documents/vtr-8.0-Clion/vtr_flow/benchmarks/blif/6/s5378.blif
-/home/ivan/Documents/vtr-8.0-Clion/vtr_flow/benchmarks/blif/6/cps.blif
-/home/ivan/Documents/vtr-8.0-Clion/vtr_flow/benchmarks/blif/6/apex1.blif
-/home/ivan/Documents/vtr-8.0-Clion/vtr_flow/benchmarks/blif/6/C3540.blif
+
+
+
+

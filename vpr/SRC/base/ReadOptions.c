@@ -244,7 +244,7 @@ void free_output_file_names() {
 
 /******** Subroutine implementations ********/
 
-void ReadOptions(int argc, const char **argv, t_options * Options, char *circuit_path) {
+void ReadOptions(int argc, const char **argv, t_options * Options) {
 	char **Args, **head;
 	int offset;
 	
@@ -275,7 +275,7 @@ void ReadOptions(int argc, const char **argv, t_options * Options, char *circuit
 			++Args;
 		} else if (NULL == Options->CircuitName) {
 			Options->CircuitName = vtr::strdup(*Args);
-			Options->CircuitName = circuit_path;
+			//Options->CircuitName = circuit_path;
 			/*if the user entered the circuit name with the .blif extension, remove it now*/
 			offset = strlen(Options->CircuitName) - 5;
 			if (offset > 0 && !strcmp(Options->CircuitName + offset, ".blif")) {

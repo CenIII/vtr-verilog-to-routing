@@ -1146,6 +1146,12 @@ void free_rr_graph(void) {
 		if (rr_node[i].switches != NULL) {
 			free(rr_node[i].switches);
 		}
+		if(rr_node[i].R_pct != NULL){
+			free(rr_node[i].R_pct);
+		}
+		if(rr_node[i].start_p != NULL){
+			free(rr_node[i].start_p);
+		}
 	}
 
 	VTR_ASSERT(rr_node_indices);

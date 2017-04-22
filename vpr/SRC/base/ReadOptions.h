@@ -150,8 +150,7 @@ enum e_output_files {
 
 void ReadOptions(int argc,
 		const char **argv,
-		t_options * Options,
-		char* circuit_path
+		t_options * Options
 );
 
 bool getEchoEnabled(void);

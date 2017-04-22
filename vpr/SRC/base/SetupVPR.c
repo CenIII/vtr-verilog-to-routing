@@ -211,6 +211,7 @@ void SetupVPR(t_options *Options, const bool TimingEnabled,
 	SetupPowerOpts(*Options, PowerOpts, Arch);
 
 	if (readArchFile == true) {
+
 		XmlReadArch(Options->ArchFile, TimingEnabled, Arch, &type_descriptors,
 				&num_types);
 	}
